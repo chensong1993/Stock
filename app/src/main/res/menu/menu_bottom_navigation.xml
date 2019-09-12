@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:icon="@drawable/tabbar_item_selector_news"
+        android:title="@string/x_zixun"/>
+
+    <item
+        android:icon="@drawable/tabbar_item_selector_data"
+        android:title="快讯"/>
+
+    <item
+        android:icon="@drawable/tabbar_item_selector_market"
+        android:title="专题"/>
+    <item
+        android:icon="@drawable/tabbar_item_selector_brand"
+        android:title="活动"/>
+
+
+
+</menu>
