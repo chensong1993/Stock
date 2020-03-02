@@ -40,12 +40,13 @@ import io.reactivex.Flowable;
 import io.reactivex.Single;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import retrofit2.http.Query;
 
 public interface HttpHelper {
 
     Flowable<ApiResponse<List<AdverticeEntity>>> getWelcomeData();
 
-    Flowable<ApiResponse<List<ArticlesEntity>>> getArticles(int categoryId);
+    Flowable<ApiResponse<List<ArticlesEntity>>> getArticles(int categoryId, int page);
 
     Flowable<ApiResponse<List<ArticleDetailEntity>>> getArticle(int id, int originalId);
 
@@ -203,4 +204,8 @@ public interface HttpHelper {
     Flowable<HashKeyEntity> avatarUpload(String token, RequestBody file);
 
     Flowable<WeatherEntity<H3>> weatherData(String appKey, String area);
+
+    Flowable<ApiResponse<List<ArticlesEntity>>> newsSearch(String searchKey, int offset);
+
+    Flowable<ApiResponse<List<ArticlesEntity>>> newsSearch(String searchKey, int offset, int size);
 }

@@ -91,7 +91,7 @@ public class ShareBottomDialog extends BaseBottomDialog implements View.OnClickL
         titleDetail = getArguments().getString("titleDetail");
         type = getArguments().getInt("type");
         Resources r = this.getContext().getResources();
-        mBitmap = BitmapFactory.decodeResource(r, R.drawable.ic_search_icon);
+        mBitmap = BitmapFactory.decodeResource(r, R.drawable.ic_app_icon);
         switch (view.getId()) {
             case R.id.img_qq:
                 if (type == 0) {

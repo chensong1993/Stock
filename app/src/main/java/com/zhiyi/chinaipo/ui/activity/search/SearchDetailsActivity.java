@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -72,8 +73,8 @@ import butterknife.OnClick;
  */
 public class SearchDetailsActivity extends BaseActivity<SearchPresenter> implements SearchConnector.View {
 
-    @BindView(R.id.tv_xinxi)
-    TextView mTvXinxi;
+    //    @BindView(R.id.tv_xinxi)
+//    TextView mTvXinxi;
     @BindView(R.id.tv_quxiao)
     TextView mQuxiao;
     @BindView(R.id.et_seek)
@@ -84,20 +85,14 @@ public class SearchDetailsActivity extends BaseActivity<SearchPresenter> impleme
     ImageView mImgCache;
     @BindView(R.id.rv_search_result_news)
     RecyclerView rvResultsNews;
-    @BindView(R.id.rv_search_result_stock)
-    RecyclerView rvResultStock;
-    @BindView(R.id.rv_search_result_exact_stock)
-    RecyclerView rvOneResultStock;
     @BindView(R.id.refresh_search_result)
     SmartRefreshLayout mRefreshSearch;
-    @BindView(R.id.rl_search_hangqing_result)
-    RelativeLayout mRlhangqingResult;
-    @BindView(R.id.rl_search_news_result)
-    RelativeLayout mRlNewsResult;
+    //    @BindView(R.id.rl_search_news_result)
+//    RelativeLayout mRlNewsResult;
     @BindView(R.id.search_result_container)
     LinearLayout mLlSearchSave;
-    @BindView(R.id.clear_record)
-    TextView mClearRecord;
+    //    @BindView(R.id.clear_record)
+//    TextView mClearRecord;
     //侧滑删除
     private SwipeMenuRecyclerView swipeMenuRecyclerView;
     private SearchSavesAdapter mSearchSaveAdapter;
@@ -105,16 +100,10 @@ public class SearchDetailsActivity extends BaseActivity<SearchPresenter> impleme
     private int mSearchType;
     private String mSearchKey;
     private String mSearchTypeName;
-    private int searchStockOffset = 1;
     private int searchNewsOffset = 1;
     private List<ArticlesEntity> mNewsList;
-    private List<StockPriceEntity> mStockList, mStockSingle;
 
-    private StockPriceEntity mStock;
-    private String mToken = "";
     private NewAdapter mAdapter;
-    private StockResultsAdapter mStocksAdapter;
-    private StockResultExactAdapter mOneStockAdapter;
     private TextView textView;
     private GuideHelper guideHelper;
 
@@ -140,15 +129,6 @@ public class SearchDetailsActivity extends BaseActivity<SearchPresenter> impleme
         finish();
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
-    protected void initInject() {
-        getActivityComponent().inject(this);
-    }
 
     @Override
     protected int getLayout() {
@@ -158,165 +138,109 @@ public class SearchDetailsActivity extends BaseActivity<SearchPresenter> impleme
     @Override
     protected void initEventAndData() {
         mEtSeek.addTextChangedListener(new EditChangedListener());
-        mToken = SPHelper.get(Constants.REGISTER_MESSAGES_TOKEN, "");
-        mSearchType = getIntent().getIntExtra(Constants.SEARCHING_TYPE_KEY, 0);
-        mSearchKey = getIntent().getStringExtra(Constants.SEARCHING_KEY_USING);
-        mSearchTypeName = getIntent().getStringExtra(Constants.SEARCHING_TYPE);
-        mTvXinxi.setText(mSearchTypeName);
+        //  mToken = SPHelper.get(Constants.REGISTER_MESSAGES_TOKEN, "");
+        //  mSearchType = getIntent().getIntExtra(Constants.SEARCHING_TYPE_KEY, 0);
+        // mSearchKey = getIntent().getStringExtra(Constants.SEARCHING_KEY_USING);
+        //  mSearchTypeName = getIntent().getStringExtra(Constants.SEARCHING_TYPE);
+        //  mTvXinxi.setText(mSearchTypeName);
         mNewsList = new ArrayList<>();
         mAdapter = new NewAdapter(mContext, mNewsList);
         rvResultsNews.setAdapter(mAdapter);
         rvResultsNews.addItemDecoration(new RecycleViewDivider(this, LinearLayoutManager.HORIZONTAL, 1, ContextCompat.getColor(this, R.color.hui)));
         rvResultsNews.setLayoutManager(new LinearLayoutManager(this));
         rvResultsNews.setNestedScrollingEnabled(false);
-        searchSave();
-
-        //行情搜索结果
-        mStockList = new ArrayList<>();
-        mStocksAdapter = new StockResultsAdapter(mContext, mStockList, mSearchType);
-        mStocksAdapter.setOnItemClickListener(new StockResultsAdapter.OnRecyclerViewItemClickListener() {
-            @Override
-            public void onClick(View view, StockResultsAdapter.ViewName viewName, int position) {
-                if (viewName.equals(StockResultsAdapter.ViewName.PRACTISE)) {
-                    StarUtil.Star(view, mToken, SearchDetailsActivity.this, mStockList, position);
-                }
-            }
-        });
-        rvResultStock.setAdapter(mStocksAdapter);
-        rvResultStock.addItemDecoration(new RecycleViewDivider(this, LinearLayoutManager.HORIZONTAL, 1, ContextCompat.getColor(this, R.color.hui)));
-        rvResultStock.setLayoutManager(new LinearLayoutManager(this));
-        rvResultStock.setNestedScrollingEnabled(false);
-        mStockSingle = new ArrayList<>();
-        mOneStockAdapter = new StockResultExactAdapter(mContext, mStockSingle);
-        mOneStockAdapter.setOnItemClickListener(new StockResultExactAdapter.OnRecyclerViewItemClickListener() {
-            @Override
-            public void onClick(View view, StockResultExactAdapter.ViewName viewName, int position) {
-                if (viewName.equals(StockResultExactAdapter.ViewName.PRACTISE)) {
-                    StarUtil.Star(view, mToken, SearchDetailsActivity.this, mStockSingle, position);
-                }
-            }
-        });
-        rvOneResultStock.setAdapter(mOneStockAdapter);
-        rvOneResultStock.addItemDecoration(new RecycleViewDivider(this, LinearLayoutManager.HORIZONTAL, 1, ContextCompat.getColor(this, R.color.hui)));
-        rvOneResultStock.setLayoutManager(new LinearLayoutManager(this));
-        rvOneResultStock.setNestedScrollingEnabled(false);
-        setupSearch();
+        //searchSave();
+        // setupSearch();
         setupRefresh();
     }
 
     //搜索记录
     private void searchSave() {
         mSearchSaveList = new ArrayList<>();
-        swipeMenuRecyclerView = findViewById(R.id.rv_news_search_save);
-        swipeMenuRecyclerView.setLongPressDragEnabled(false);// 开启拖拽。
-        swipeMenuRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        swipeMenuRecyclerView.setSwipeMenuCreator(swipeMenuCreator);
-        swipeMenuRecyclerView.setSwipeMenuItemClickListener(mMenuItemClickListener); // Item的Menu点击。
-        swipeMenuRecyclerView.addItemDecoration(new RecycleViewDivider(this, LinearLayoutManager.HORIZONTAL, 1, ContextCompat.getColor(this, R.color.hui)));
+//        swipeMenuRecyclerView = findViewById(R.id.rv_news_search_save);
+//        swipeMenuRecyclerView.setLongPressDragEnabled(false);// 开启拖拽。
+//        swipeMenuRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        swipeMenuRecyclerView.setSwipeMenuCreator(swipeMenuCreator);
+//        swipeMenuRecyclerView.setSwipeMenuItemClickListener(mMenuItemClickListener); // Item的Menu点击。
+//        swipeMenuRecyclerView.addItemDecoration(new RecycleViewDivider(this, LinearLayoutManager.HORIZONTAL, 1, ContextCompat.getColor(this, R.color.hui)));
+//
     }
 
-    /**
-     * RecyclerView的Item的Menu点击监听。
-     */
-    private SwipeMenuItemClickListener mMenuItemClickListener = new SwipeMenuItemClickListener() {
-        @Override
-        public void onItemClick(SwipeMenuBridge menuBridge) {
-            menuBridge.closeMenu();
 
-            int direction = menuBridge.getDirection(); // 左侧还是右侧菜单。
-            int adapterPosition = menuBridge.getAdapterPosition(); // RecyclerView的Item的position。
+    private void setupSearch() {
+        mEtSeek.setText(mSearchKey);
+        clearAllResults();
+        mPresenter.searchByTitle(mSearchKey, searchNewsOffset);
+//        mEtSeek.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+//            @Override
+//            public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
+//                if (actionId == EditorInfo.IME_ACTION_SEND
+//                        || actionId == EditorInfo.IME_ACTION_DONE
+//                        || (event != null && KeyEvent.KEYCODE_ENTER == event.getKeyCode()
+//                        && KeyEvent.ACTION_DOWN == event.getAction())) {
+//                    SnackbarUtil.showShort(mContext.getWindow().getDecorView(), "开始搜索" + mEtSeek.getText());
+//                    mSearchKey = mEtSeek.getText().toString();
+//                    SearchSave mSearchSave = new SearchSave(null, mSearchKey);
+//                    App.getInstance().getSearchSaveDao().insert(mSearchSave);
+//                    if (mSearchType == Constants.SEARCHING_TYPE_ALL) {
+//                        mPresenter.searchByTitle(mSearchKey, 1);
+//                    } else if (mSearchType == Constants.SEARCHING_TYPE_NEWS) {
+//                        mPresenter.searchByTitle(mSearchKey, 1, 20);
+//                    }
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
+    }
 
-            if (direction == SwipeMenuRecyclerView.RIGHT_DIRECTION) {
-                mSearchSaveList.remove(adapterPosition);
-                mSearchSaveAdapter.notifyItemRemoved(adapterPosition);
-            }
-            App.getInstance().getSearchSaveDao().deleteAll();
-            for (int j = 0; j < mSearchSaveList.size(); j++) {
-                SearchSave mSearchSave = new SearchSave(null, mSearchSaveList.get(j).getSearchName());
-                App.getInstance().getSearchSaveDao().insert(mSearchSave);
-            }
-        }
-    };
+    private void clearAllResults() {
+        mNewsList.clear();
+        mAdapter.notifyDataSetChanged();
 
-    //侧滑设置
-    SwipeMenuCreator swipeMenuCreator = new SwipeMenuCreator() {
-        @Override
-        public void onCreateMenu(SwipeMenu swipeLeftMenu, SwipeMenu swipeRightMenu, int viewType) {
-            int width = 150;
-            int height = ViewGroup.LayoutParams.MATCH_PARENT;
-            SwipeMenuItem menuItem = new SwipeMenuItem(App.getInstance());
-            menuItem.setText("删除");
-            menuItem.setTextColor(ContextCompat.getColor(SearchDetailsActivity.this, R.color.white));
-            menuItem.setHeight(height);
-            menuItem.setWidth(width);
-            menuItem.setBackground(R.color.red);
-            swipeRightMenu.addMenuItem(menuItem);
-
-        }
-    };
+    }
 
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
+    public void searchNewList(List<ArticlesEntity> list) {
+        if (searchNewsOffset == 1) {
+            mAdapter.chengData(list);
+            mRefreshSearch.finishRefresh();
+
+        } else {
+            mAdapter.addAll(list);
+            mRefreshSearch.finishLoadmore();
         }
-        return true;
     }
 
-    private void setupSearch() {
-        //  LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        mEtSeek.setText(mSearchKey);
-        clearAllResults();
-        if (mSearchType == Constants.SEARCHING_TYPE_NEWS) {
-            mEtSeek.setHint("搜索资讯");
-            mTvXinxi.setText("资讯");
-            mRlNewsResult.setVisibility(View.GONE);
-            mRlhangqingResult.setVisibility(View.GONE);
-            mPresenter.searchByTitle(mSearchKey, searchNewsOffset);
-        } else if (mSearchType == Constants.SEARCHING_TYPE_STOCK) {
-            mEtSeek.setHint("搜索行情");
-            mTvXinxi.setText("行情");
-            mRlNewsResult.setVisibility(View.GONE);
-            mRlhangqingResult.setVisibility(View.GONE);
-            mPresenter.searchStockByKey(mSearchKey, searchStockOffset);
-        } else if (mSearchType == Constants.SEARCHING_TYPE_AUTHOR) {
-            mTvXinxi.setText("作者");
-            mEtSeek.setHint("搜索作者");
-            mRlNewsResult.setVisibility(View.GONE);
-            mRlhangqingResult.setVisibility(View.GONE);
-            mPresenter.searchByAuthor(mSearchKey, searchNewsOffset);
-        } else {
-            mTvXinxi.setText("全部");
-            mEtSeek.setHint("搜索全部");
-            mPresenter.searchStockByKey(mSearchKey, searchStockOffset);
-            mPresenter.searchByTitle(mSearchKey, searchNewsOffset);
+    @Override
+    public void err(String err) {
+        //  mRefreshSearch.finishRefresh();
+        if (searchNewsOffset == 1||mSearchKey.length()==0) {
+            ToastUtil.showToast(this, "暂无数据");
+            mAdapter.chengData(null);
+            mAdapter.notifyDataSetChanged();
         }
-        mEtSeek.setImeActionLabel("搜索", KeyEvent.KEYCODE_ENTER);
-        mEtSeek.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mRefreshSearch.finishRefresh();
+        mRefreshSearch.finishLoadmore();
+    }
+
+
+    public void setupRefresh() {
+        //下拉刷新
+        mRefreshSearch.setOnRefreshListener(new OnRefreshListener() {
             @Override
-            public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEND
-                        || actionId == EditorInfo.IME_ACTION_DONE
-                        || (event != null && KeyEvent.KEYCODE_ENTER == event.getKeyCode()
-                        && KeyEvent.ACTION_DOWN == event.getAction())) {
-                    SnackbarUtil.showShort(mContext.getWindow().getDecorView(), "开始搜索" + mEtSeek.getText());
-                    mSearchKey = mEtSeek.getText().toString();
-                    SearchSave mSearchSave = new SearchSave(null, mSearchKey);
-                    App.getInstance().getSearchSaveDao().insert(mSearchSave);
-                    if (mSearchType == Constants.SEARCHING_TYPE_ALL) {
-                        mPresenter.searchByTitle(mSearchKey, 1);
-                        mPresenter.searchStockByKey(mSearchKey, searchStockOffset);
-                    } else if (mSearchType == Constants.SEARCHING_TYPE_NEWS) {
-                        mPresenter.searchByTitle(mSearchKey, 1);
-                    } else if (mSearchType == Constants.SEARCHING_TYPE_STOCK) {
-                        mPresenter.searchStockByKey(mSearchKey, 1);
-                    } else if (mSearchType == Constants.SEARCHING_TYPE_AUTHOR) {
-                        mPresenter.searchByAuthor(mSearchKey, searchNewsOffset);
-                    }
-                    return true;
-                }
-                return false;
+            public void onRefresh(RefreshLayout refreshlayout) {
+                searchNewsOffset = 1;
+                mPresenter.searchByTitle(mSearchKey, searchNewsOffset);
+            }
+        });
+        //加载更多
+        mRefreshSearch.setOnLoadmoreListener(new OnLoadmoreListener() {
+            @Override
+            public void onLoadmore(RefreshLayout refreshlayout) {
+                searchNewsOffset++;
+                mPresenter.searchByTitle(mSearchKey, searchNewsOffset);
             }
         });
     }
@@ -329,81 +253,126 @@ public class SearchDetailsActivity extends BaseActivity<SearchPresenter> impleme
 
         @Override
         public void onTextChanged(CharSequence s, int i, int i1, int i2) {
-            if (mEtSeek.getText().length() > 0) {
-                mStockList.clear();
-                mStockSingle.clear();
-                mNewsList.clear();
-                mRlNewsResult.setVisibility(View.GONE);
-                mRlhangqingResult.setVisibility(View.GONE);
-                swipeMenuRecyclerView.setVisibility(View.GONE);
-                mLlSearchSave.setVisibility(View.VISIBLE);
-                mClearRecord.setVisibility(View.GONE);
-            }
+            //  Log.i("onTextChanged", "onTextChanged: "+s.toString());
+            mSearchKey = s.toString();
+            mPresenter.searchByTitle(mSearchKey, 1);
+//            if (mEtSeek.getText().length() > 0) {
+//                mNewsList.clear();
+//               // mRlNewsResult.setVisibility(View.GONE);
+//                swipeMenuRecyclerView.setVisibility(View.GONE);
+//                mLlSearchSave.setVisibility(View.VISIBLE);
+//         //       mClearRecord.setVisibility(View.GONE);
+//            }
         }
 
         @Override
         public void afterTextChanged(Editable editable) {
-            if (mEtSeek.getText().length() <= 0) {
-                mStockList.clear();
-                mStockSingle.clear();
-                mNewsList.clear();
-                mSearchSaveList.clear();
-                Set set = new HashSet();
-                for (Iterator iter = App.getInstance().getSearchSaveDao().queryBuilder().list().iterator(); iter.hasNext(); ) {
-                    SearchSave searchSave = (SearchSave) iter.next();
-                    if (set.add(searchSave.getSearchName())) {
-                        mSearchSaveList.add(searchSave);
-                        Collections.reverse(mSearchSaveList);
-                    }
-                }
-                mSearchSaveAdapter = new SearchSavesAdapter(SearchDetailsActivity.this, mSearchSaveList);
-                swipeMenuRecyclerView.setAdapter(mSearchSaveAdapter);
-                swipeMenuRecyclerView.setSwipeItemClickListener(new SwipeItemClickListener() {
-                    @Override
-                    public void onItemClick(View itemView, int position) {
-                        mSearchKey = mSearchSaveList.get(position).getSearchName();
-                        mEtSeek.setText(mSearchKey);
-                        mPresenter.searchStockByKey(mSearchKey, searchStockOffset);
-                        mPresenter.searchByTitle(mSearchKey, searchNewsOffset);
-                    }
-                });
-                swipeMenuRecyclerView.setVisibility(View.VISIBLE);
-                mLlSearchSave.setVisibility(View.GONE);
-                if (mSearchSaveList.size() > 0) {
-                    initGuide();
-                    mClearRecord.setVisibility(View.VISIBLE);
-                }
-
-            }
+//            if (mEtSeek.getText().length() <= 0) {
+//                mNewsList.clear();
+//                mSearchSaveList.clear();
+//                Set set = new HashSet();
+//                for (Iterator iter = App.getInstance().getSearchSaveDao().queryBuilder().list().iterator(); iter.hasNext(); ) {
+//                    SearchSave searchSave = (SearchSave) iter.next();
+//                    if (set.add(searchSave.getSearchName())) {
+//                        mSearchSaveList.add(searchSave);
+//                        Collections.reverse(mSearchSaveList);
+//                    }
+//                }
+//                mSearchSaveAdapter = new SearchSavesAdapter(SearchDetailsActivity.this, mSearchSaveList);
+//                swipeMenuRecyclerView.setAdapter(mSearchSaveAdapter);
+//                swipeMenuRecyclerView.setSwipeItemClickListener(new SwipeItemClickListener() {
+//                    @Override
+//                    public void onItemClick(View itemView, int position) {
+//                        mSearchKey = mSearchSaveList.get(position).getSearchName();
+//                        mEtSeek.setText(mSearchKey);
+//                        mPresenter.searchByTitle(mSearchKey, searchNewsOffset);
+//                    }
+//                });
+//                swipeMenuRecyclerView.setVisibility(View.VISIBLE);
+//                mLlSearchSave.setVisibility(View.GONE);
+//                if (mSearchSaveList.size() > 0) {
+//                    initGuide();
+//                 //   mClearRecord.setVisibility(View.VISIBLE);
+//                }
+//
+//            }
         }
     }
 
-    private void initGuide() {
-        String only = SPHelper.get("searchOnly", "");
-        if (only.equals("")) {
-            final GuideHelper guideHelper = new GuideHelper(this);
-            View view = guideHelper.inflate(R.layout.item_guide);
-            view.findViewById(R.id.rl_guide).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    guideHelper.dismiss();
-                }
-            });
-            GuideHelper.TipData tipData = new GuideHelper.TipData(view, Gravity.RIGHT|Gravity.TOP);
-            tipData.setLocation(0, DisplayUtils.dipToPix(this, 65));
-            guideHelper.addPage(tipData);
-            guideHelper.show(false);
-            SPHelper.save("searchOnly", "one");
-        }
-    }
+//    /**
+//     * RecyclerView的Item的Menu点击监听。
+//     */
+//    private SwipeMenuItemClickListener mMenuItemClickListener = new SwipeMenuItemClickListener() {
+//        @Override
+//        public void onItemClick(SwipeMenuBridge menuBridge) {
+//            menuBridge.closeMenu();
+//
+//            int direction = menuBridge.getDirection(); // 左侧还是右侧菜单。
+//            int adapterPosition = menuBridge.getAdapterPosition(); // RecyclerView的Item的position。
+//
+//            if (direction == SwipeMenuRecyclerView.RIGHT_DIRECTION) {
+//                mSearchSaveList.remove(adapterPosition);
+//                mSearchSaveAdapter.notifyItemRemoved(adapterPosition);
+//            }
+//            App.getInstance().getSearchSaveDao().deleteAll();
+//            for (int j = 0; j < mSearchSaveList.size(); j++) {
+//                SearchSave mSearchSave = new SearchSave(null, mSearchSaveList.get(j).getSearchName());
+//                App.getInstance().getSearchSaveDao().insert(mSearchSave);
+//            }
+//        }
+//    };
 
-    @OnClick(R.id.clear_record)
-    void clearRecord() {
+//    //侧滑设置
+//    SwipeMenuCreator swipeMenuCreator = new SwipeMenuCreator() {
+//        @Override
+//        public void onCreateMenu(SwipeMenu swipeLeftMenu, SwipeMenu swipeRightMenu, int viewType) {
+//            int width = 150;
+//            int height = ViewGroup.LayoutParams.MATCH_PARENT;
+//            SwipeMenuItem menuItem = new SwipeMenuItem(App.getInstance());
+//            menuItem.setText("删除");
+//            menuItem.setTextColor(ContextCompat.getColor(SearchDetailsActivity.this, R.color.white));
+//            menuItem.setHeight(height);
+//            menuItem.setWidth(width);
+//            menuItem.setBackground(R.color.red);
+//            swipeRightMenu.addMenuItem(menuItem);
+//
+//        }
+//    };
+//
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        if (item.getItemId() == android.R.id.home) {
+//            finish();
+//        }
+//        return true;
+//    }
+//    private void initGuide() {
+//        String only = SPHelper.get("searchOnly", "");
+//        if (only.equals("")) {
+//            final GuideHelper guideHelper = new GuideHelper(this);
+//            View view = guideHelper.inflate(R.layout.item_guide);
+//            view.findViewById(R.id.rl_guide).setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    guideHelper.dismiss();
+//                }
+//            });
+//            GuideHelper.TipData tipData = new GuideHelper.TipData(view, Gravity.RIGHT | Gravity.TOP);
+//            tipData.setLocation(0, DisplayUtils.dipToPix(this, 65));
+//            guideHelper.addPage(tipData);
+//            guideHelper.show(false);
+//            SPHelper.save("searchOnly", "one");
+//        }
+//    }
 
-        App.getInstance().getSearchSaveDao().deleteAll();
-        mSearchSaveList.clear();
-        mSearchSaveAdapter.notifyDataSetChanged();
-        mClearRecord.setVisibility(View.GONE);
+//    @OnClick(R.id.clear_record)
+//    void clearRecord() {
+//
+//        App.getInstance().getSearchSaveDao().deleteAll();
+//        mSearchSaveList.clear();
+//        mSearchSaveAdapter.notifyDataSetChanged();
+//        mClearRecord.setVisibility(View.GONE);
 //        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 //        builder.setMessage("确认清除所有搜索记录吗?");
 //        builder.setNegativeButton("取消", null);
@@ -415,124 +384,17 @@ public class SearchDetailsActivity extends BaseActivity<SearchPresenter> impleme
 //        });
 
 
-    }
+    //   }
 
-    private void clearAllResults() {
-        mStockList.clear();
-        mOneStockAdapter.notifyDataSetChanged();
-        mStockSingle.clear();
-        mStocksAdapter.notifyDataSetChanged();
-        mNewsList.clear();
-        mAdapter.notifyDataSetChanged();
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     @Override
-    public void updateSearchContext(int searchType, String searchString) {
-        mSearchType = searchType;
-        mSearchKey = searchString;
-        searchStockOffset = 1;
-        searchNewsOffset = 1;
-        setupSearch();
+    protected void initInject() {
+        getActivityComponent().inject(this);
     }
-
-    @Override
-    public void userToken(String userToken) {
-        if (userToken != null) {
-            mToken = userToken;
-            LogUtil.i("userToken", userToken);
-        }
-    }
-
-    @Override
-    public void err(String err) {
-        //  mRefreshSearch.finishRefresh();
-        ToastUtil.showToast(this, "暂无更多数据");
-        mRefreshSearch.finishLoadmoreWithNoMoreData();
-    }
-
-
-    public void setupRefresh() {
-        //下拉刷新
-        mRefreshSearch.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshlayout) {
-                searchStockOffset = 1;
-                searchNewsOffset = 1;
-                if (mSearchType == Constants.SEARCHING_TYPE_ALL || mSearchType == Constants.SEARCHING_TYPE_NEWS) {
-                    mPresenter.searchByTitle(mSearchKey, searchNewsOffset);
-                } else if (mSearchType == Constants.SEARCHING_TYPE_ALL || mSearchType == Constants.SEARCHING_TYPE_STOCK) {
-                    mPresenter.searchStockByKey(mSearchKey, searchStockOffset);
-                }
-                refreshlayout.finishRefresh();
-            }
-        });
-        //加载更多
-        mRefreshSearch.setOnLoadmoreListener(new OnLoadmoreListener() {
-            @Override
-            public void onLoadmore(RefreshLayout refreshlayout) {
-                if (mSearchType == Constants.SEARCHING_TYPE_ALL || mSearchType == Constants.SEARCHING_TYPE_NEWS) {
-                    mPresenter.searchByTitle(mSearchKey, ++searchNewsOffset);
-                } else if (mSearchType == Constants.SEARCHING_TYPE_ALL || mSearchType == Constants.SEARCHING_TYPE_STOCK) {
-                    mPresenter.searchStockByKey(mSearchKey, ++searchStockOffset);
-                }
-            }
-        });
-    }
-
-    public void showStock(StockPriceEntity gotStock) {
-//        mTvStockName.setText(gotStock.getStock_name());
-//        mTvStockCode.setText(gotStock.getStock_code());
-//        mTvStockChange.setText(NumericUtil.getStockValue(gotStock.getChng()));
-//        mTvStockChangePercent.setText(NumericUtil.getPrefixedPercentage(gotStock.getChng_pct()));
-//        mTvStockValue.setText(NumericUtil.getStockValue(gotStock.getTotal_value()));
-
-        mStock = gotStock;
-        mStocksAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void showStocks(List<StockPriceEntity> stockIndexes) {
-        if (stockIndexes.size() == 1) {
-            mStockSingle.clear();
-            mStockList.clear();
-            mStockSingle.addAll(stockIndexes);
-            mOneStockAdapter.notifyDataSetChanged();
-            mStocksAdapter.notifyDataSetChanged();
-        } else {
-            mStockSingle.clear();
-            mStockList.clear();
-            mStockList.addAll(stockIndexes);
-            mOneStockAdapter.notifyDataSetChanged();
-            mStocksAdapter.notifyDataSetChanged();
-            if (stockIndexes.size() <= 0) {
-                mStockSingle.clear();
-                mStockList.clear();
-                mRlhangqingResult.setVisibility(View.GONE);
-            } else {
-                mRlhangqingResult.setVisibility(View.VISIBLE);
-            }
-        }
-        mRefreshSearch.finishLoadmore();
-    }
-
-    @Override
-    public void showArticles(List<ArticlesEntity> newsList) {
-        if (searchNewsOffset == 1) {
-            mNewsList.clear();
-        }
-        mNewsList.addAll(newsList);
-        mAdapter.notifyDataSetChanged();
-        if (newsList.size() <= 0) {
-            mNewsList.clear();
-            mNewsList.addAll(newsList);
-            mRlNewsResult.setVisibility(View.GONE);
-        } else {
-            mRlNewsResult.setVisibility(View.VISIBLE);
-        }
-        mRefreshSearch.finishRefresh();
-        mRefreshSearch.finishLoadmore();
-    }
-
 
 }

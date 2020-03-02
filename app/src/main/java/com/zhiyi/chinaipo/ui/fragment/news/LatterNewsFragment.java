@@ -127,16 +127,16 @@ public class LatterNewsFragment extends BaseFragment<LatterArticlesPresenter> im
         }
     }
 
-    private void changeReadState(ArticlesEntity newsEntity) {
-        for (Iterator iter = App.getInstance().getNewsSaveDao().queryBuilder().list().iterator(); iter.hasNext(); ) {
-            NewsSave element = (NewsSave) iter.next();
-            if (element.getNewId().equals(newsEntity.getOriginalId() + "")) {
-                LogUtil.i("getCategoryId", element.getNewId());
-                newsEntity.setRead(true);
-            }
-        }
-
-    }
+//    private void changeReadState(ArticlesEntity newsEntity) {
+//        for (Iterator iter = App.getInstance().getNewsSaveDao().queryBuilder().list().iterator(); iter.hasNext(); ) {
+//            NewsSave element = (NewsSave) iter.next();
+//            if (element.getNewId().equals(newsEntity.getOriginalId() + "")) {
+//                LogUtil.i("getCategoryId", element.getNewId());
+//                newsEntity.setRead(true);
+//            }
+//        }
+//
+//    }
 
     private void autoLoadMore() {
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -181,7 +181,7 @@ public class LatterNewsFragment extends BaseFragment<LatterArticlesPresenter> im
         stateMain();
         mAdapter.chengData(list);
         for (int i = 0; i < list.size(); i++) {
-            changeReadState(list.get(i));
+        //    changeReadState(list.get(i));
 
         }
         mTvAgainLoad.setVisibility(View.GONE);

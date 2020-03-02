@@ -92,6 +92,7 @@ public class NewsDetailActivity extends BaseActivity<ArticleDetailPresenter> imp
 
     @Override
     protected void initEventAndData() {
+        mTvActivityTitle.setText("资本邦");
         // 加载网络 data
         mRelatedLinks = new ArrayList<>();
         WebDetailList = new ArrayList<>();
@@ -159,13 +160,11 @@ public class NewsDetailActivity extends BaseActivity<ArticleDetailPresenter> imp
                 myScrollView.setOnObservableScrollViewListener(new MyScrollView.OnObservableScrollViewListener() {
                     @Override
                     public void onObservableScrollViewListener(int l, int t, int oldl, int oldt) {
-                        if (t <= 0) {
+                        if (t <= 100) {
                             //顶部图处于最顶部，标题栏透明
-                            mTvActivityTitle.setText(scrollTitle);
-                        } else if (t > 0 && t < mHeight) {
-                            mTvActivityTitle.setText(scrollTitle);
+                            mTvActivityTitle.setText("资本邦");
                         } else {
-                            mTvActivityTitle.setText(shareTitle);
+                            mTvActivityTitle.setText(scrollTitle);
                         }
                     }
                 });
@@ -175,8 +174,7 @@ public class NewsDetailActivity extends BaseActivity<ArticleDetailPresenter> imp
 
     @Override
     public void showNewsDetail(ArticleDetailEntity newsDetail) {
-        mTvActivityTitle.setText(newsDetail.getCategoryName());
-        scrollTitle = newsDetail.getCategoryName();
+        scrollTitle = newsDetail.getTitle();
         shareTitle = newsDetail.getTitle();
         shareDetail = newsDetail.getLead_in();
         WebDetailList.add(newsDetail);

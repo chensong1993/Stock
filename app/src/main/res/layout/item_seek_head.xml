@@ -54,7 +54,8 @@
             android:gravity="center_vertical|right"
             android:text="@string/x_search_quanbu"
             android:textColor="@color/blue"
-            android:textSize="12dp" />
+            android:textSize="12dp"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/imgcache"

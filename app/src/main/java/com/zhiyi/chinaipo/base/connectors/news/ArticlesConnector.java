@@ -1,5 +1,7 @@
 package com.zhiyi.chinaipo.base.connectors.news;
 
+import android.util.Log;
+
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.zhiyi.chinaipo.base.BasePresenter;
 import com.zhiyi.chinaipo.base.BaseView;
@@ -39,6 +41,10 @@ public interface ArticlesConnector {
         void showErr();
 
         void moreErr();
+
+        static void err(String err) {
+            Log.i("ArticlesConnector", "err: "+err);
+        }
 
     }
 

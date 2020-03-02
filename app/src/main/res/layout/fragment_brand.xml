@@ -3,8 +3,7 @@
     android:id="@+id/ll_brand"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.zhiyi.chinaipo.ui.fragment.BrandFragment">
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/fillStatusBarView"

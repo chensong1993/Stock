@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Handler;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +29,10 @@ import com.zhiyi.chinaipo.util.SPHelper;
 import com.zhiyi.chinaipo.util.SystemUtil;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -64,7 +68,7 @@ public class ColumnActivity extends BaseActivity<CategoryPresenter> implements C
     /**
      * 用户栏目列表
      */
-    List<CategoryEntity> userColumnList;
+    public List<CategoryEntity> userColumnList;
     List<CategoryEntity> userList;
     List<CategoryEntity> otherList;
     List<CategoryEntity> AllList;
@@ -177,7 +181,11 @@ public class ColumnActivity extends BaseActivity<CategoryPresenter> implements C
         otherColumnList = new ArrayList<>();
         mPresenter.getCategories(1);
         mPresenter.getCategoriesTwo(2);
+
+        LogUtil.i("111", userColumnList.toString());
         if (SPHelper.getDataList(USER_LIST).size() > 0) {
+            userColumnList = SPHelper.getDataList(USER_LIST);
+            otherColumnList = SPHelper.getDataList(OTHER_LIST);
             //将我的频道和频道推荐合并
             AllColumnList = SPHelper.getDataList(USER_LIST);
             LogUtil.i("AllList", AllColumnList.toString());
@@ -185,47 +193,7 @@ public class ColumnActivity extends BaseActivity<CategoryPresenter> implements C
                 AllColumnList.addAll(SPHelper.getDataList(OTHER_LIST));
                 LogUtil.i("AllList1", AllColumnList.toString());
             }
-            userColumnList = SPHelper.getDataList(USER_LIST);
-            otherColumnList = SPHelper.getDataList(OTHER_LIST);
-            //检测网络获取的频道是否有删减
-            if (SystemUtil.isNetworkConnected()) {
-                //合并网络请求的我的频道和频道推荐
-                AllList = SPHelper.getDataList(SP_USER_LIST);
-                AllList.addAll(SPHelper.getDataList(SP_OTHER_LIST));
-                //遍历对比网络请求的数据个本地数据
-                for (CategoryEntity entity : AllColumnList) {
-                    //如果本地有多余的频道进行排查到底实在我的频道还是在推荐中然后进行删除
-                    if (!AllList.contains(entity)) {
-                        for (int i = 0; i < SPHelper.getDataList(USER_LIST).size(); i++) {
-                            if (userColumnList.get(i).equals(entity)) {
-                                userColumnList.remove(entity);
-                                SPHelper.setDataList(USER_LIST, userColumnList);
-                                //   LogUtil.i("sadasdasdada", entity.getName());
-                            }
-                        }
-                        for (int i = 0; i < SPHelper.getDataList(OTHER_LIST).size(); i++) {
-                            if (otherColumnList.get(i).equals(entity)) {
-                                otherColumnList.remove(entity);
-                                SPHelper.setDataList(OTHER_LIST, otherColumnList);
-                                //  LogUtil.i("sadasdasdada2", entity.getName());
-                            }
-                      /*  if (otherList.get(i).getId() == entity.getId() && !otherList.get(i).getName().equals(entity.getName())) {
-                            otherList.remove(entity);
-                            otherList.add(i, entity);
-                           *//* Set set = new HashSet();
-                            for (Iterator iterator = otherList.iterator(); iterator.hasNext(); ) {
-                                CategoryEntity entity1 = (CategoryEntity) iterator.next();
-                                if (set.add(entity1)) {
-                                    otherList.add(entity1);
-                                }
-                            }*//*
-                            SPHelper.setDataList(OTHER_LIST, otherList);
-                            LogUtil.i("sadasdasdada", entity.getName());
-                        }*/
-                        }
-                    }
-                }
-            }
+
         }
         otherGridView.setOnItemClickListener(this);
         userGridView.setOnItemClickListener(this);
@@ -325,7 +293,7 @@ public class ColumnActivity extends BaseActivity<CategoryPresenter> implements C
     private void saveColumn() {
         SPHelper.setDataList(USER_LIST, userAdapter.getColumnList());
         SPHelper.setDataList(OTHER_LIST, otherAdapter.getColumnList());
-        // LogUtil.i("USER_LIST", userAdapter.getColumnList().size() + "");
+        LogUtil.i("USER_LIST", userAdapter.getColumnList().size() + "");
     }
 
     /**
@@ -429,23 +397,22 @@ public class ColumnActivity extends BaseActivity<CategoryPresenter> implements C
 
     @Override
     public void updateCategories(List<CategoryEntity> lists) {
-        SPHelper.setDataList(SP_USER_LIST, lists);
         if (SPHelper.getDataList(USER_LIST).size() > 0) {
-            //   userColumnList = SPHelper.getDataList(USER_LIST);
-            LogUtil.i("1", userColumnList.toString());
             //检测网络获取的频道是否有增加
-            for (CategoryEntity list : lists) {
-                LogUtil.i("1", "2");
-                //判断网络的频道和本地保存的完全相等就直接引用sp里面的
-                if (!AllColumnList.contains(list)) {
-                    userColumnList.add(list);
-                    LogUtil.i("有的值11", userColumnList.toString());
-                }
+            Set set = new HashSet();
+            set.addAll(AllColumnList);
+         //   LogUtil.i("AllColumnList", set.containsAll(lists) + "");
+            //判断网络的频道和本地保存的完全相等就直接引用sp里面的
+            if (!set.containsAll(lists)) {
+                userColumnList.addAll(lists);
+                removeDuplicateWithOrder(userColumnList);
+                LogUtil.i("有的值11", userColumnList.toString());
             }
         } else {
             userColumnList = lists;
-            LogUtil.i("1", "1");
+            LogUtil.i("1", userColumnList.toString());
         }
+        SPHelper.setDataList(SP_USER_LIST, userColumnList);
         userAdapter = new DragAdapter(ColumnActivity.this, userColumnList);
         userGridView.setAdapter(userAdapter);
     }
@@ -453,19 +420,22 @@ public class ColumnActivity extends BaseActivity<CategoryPresenter> implements C
 
     @Override
     public void updateCategoriesTwo(List<CategoryEntity> lists) {
-        SPHelper.setDataList(SP_OTHER_LIST, lists);
         if (SPHelper.getDataList(USER_LIST).size() > 0) {
-            //   otherColumnList = SPHelper.getDataList(OTHER_LIST);
-            for (CategoryEntity list : lists) {
-                LogUtil.i("1", "3");
-                if (!AllColumnList.contains(list)) {
-                    otherColumnList.add(list);
-                }
+            //检测网络获取的频道是否有增加
+            Set set = new HashSet();
+            set.addAll(AllColumnList);
+          //  LogUtil.i("AllColumnList", set.containsAll(lists) + "");
+            //判断网络的频道和本地保存的完全相等就直接引用sp里面的
+            if (!set.containsAll(lists)) {
+                otherColumnList.addAll(lists);
+                removeDuplicateWithOrder(otherColumnList);
+                LogUtil.i("有的值22", otherColumnList.toString());
             }
         } else {
             otherColumnList = lists;
             LogUtil.i("2", "2");
         }
+        SPHelper.setDataList(SP_OTHER_LIST, otherColumnList);
         otherAdapter = new OtherAdapter(ColumnActivity.this, otherColumnList);
         otherGridView.setAdapter(otherAdapter);
     }
@@ -483,6 +453,20 @@ public class ColumnActivity extends BaseActivity<CategoryPresenter> implements C
     @Override
     public void bannerImg(String img) {
 
+    }
+
+    // 删除ArrayList中重复元素，保持顺序
+    public static void removeDuplicateWithOrder(List<CategoryEntity> list) {
+        Set set = new HashSet();
+        List newList = new ArrayList();
+        for (Iterator iter = list.iterator(); iter.hasNext(); ) {
+            Object element = iter.next();
+            if (set.add(element))
+                newList.add(element);
+        }
+        list.clear();
+        list.addAll(newList);
+        LogUtil.i("有的值11", list.toString());
     }
 
     @Override
@@ -516,6 +500,7 @@ public class ColumnActivity extends BaseActivity<CategoryPresenter> implements C
         userGridView.setAdapter(userAdapter);
         otherAdapter = new OtherAdapter(ColumnActivity.this, otherColumnList);
         otherGridView.setAdapter(otherAdapter);
+        Log.i("showErrorMsg", "showErrorMsg: ");
     }
 
     @Override

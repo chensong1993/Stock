@@ -8,13 +8,21 @@ import android.content.Intent;
 import android.os.Handler;
 import android.support.multidex.MultiDex;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.RemoteViews;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.tencent.bugly.Bugly;
+import com.tencent.bugly.beta.Beta;
+import com.tencent.bugly.beta.UpgradeInfo;
+import com.tencent.bugly.beta.ui.UILifecycleListener;
 import com.tencent.mmkv.MMKV;
+import com.umeng.analytics.MobclickAgent;
 import com.umeng.commonsdk.UMConfigure;
 import com.umeng.message.IUmengRegisterCallback;
 import com.umeng.message.MsgConstant;
@@ -36,8 +44,10 @@ import com.zhiyi.chinaipo.models.greendao.NicknameEntityDao;
 import com.zhiyi.chinaipo.models.greendao.PortraitEntityDao;
 import com.zhiyi.chinaipo.models.greendao.SearchSaveDao;
 import com.zhiyi.chinaipo.models.greendao.StockCodeEntityDao;
+import com.zhiyi.chinaipo.ui.activity.MainActivity;
 import com.zhiyi.chinaipo.util.LogUtil;
 
+import org.android.agoo.huawei.HuaWeiRegister;
 import org.android.agoo.xiaomi.MiPushRegistar;
 
 import java.lang.reflect.Field;
@@ -57,19 +67,21 @@ public class App extends Application {
     private NewsSaveDao mNewsSaveDao;
     private PortraitEntityDao mPortraitEntityDao;
     private NicknameEntityDao mNicknameEntityDao;
-    private static App instance=null;
+    private static App instance = null;
     public static AppComponent appComponent;
     private Set<Activity> allActivities;
+    private String value;
     public static int SCREEN_WIDTH = -1;
     public static int SCREEN_HEIGHT = -1;
     public static float DIMEN_RATE = -1.0F;
     public static int DIMEN_DPI = -1;
+    public static String Token;
 
-    public static App getInstance(){
-        if(instance==null){
-            synchronized (App.class){
-                if (instance==null){
-                    instance=new App();
+    public static App getInstance() {
+        if (instance == null) {
+            synchronized (App.class) {
+                if (instance == null) {
+                    instance = new App();
                 }
             }
         }
@@ -95,7 +107,7 @@ public class App extends Application {
         //在子线程中完成其他初始化
         InitializeService.start(this);
         //log开关
-        LogUtil.isShowLog =false;
+        LogUtil.isShowLog = true;
 //        // 设置是否自动下载补丁
 //        Beta.canAutoDownloadPatch = true;
 //        // 设置是否提示用户重启
@@ -120,18 +132,29 @@ public class App extends Application {
             e.printStackTrace();
         }
         //初始化组件化基础库, 统计SDK/推送SDK/分享SDK都必须调用此初始化接口
-        UMConfigure.init(this, "5a165f6cb27b0a0e3900026f", "Umeng", UMConfigure.DEVICE_TYPE_PHONE,
-                "4022355f67e723990fa5a5e7220b803e");
+        UMConfigure.init(instance, "5dea13f13fc1957d68000cc0", "Umeng", UMConfigure.DEVICE_TYPE_PHONE,
+                "d806e7af3a217114c7cc5211589b94d9");
+
+        /**
+         * 设置组件化的Log开关
+         * 参数: boolean 默认为false，如需查看LOG设置为true
+         */
+        UMConfigure.setLogEnabled(true);
+
+        // 选用AUTO页面采集模式
+        MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.AUTO);
         //PushSDK初始化(如使用推送SDK，必须调用此方法)
         initUpush();
         //bugly注册
         /**
          * 只允许在MainActivity上显示更新弹窗，其他activity上不显示弹窗; 不设置会默认所有activity都可以显示弹窗;
          */
-       // Beta.canShowUpgradeActs.add(MainActivity.class);
+         Beta.canShowUpgradeActs.add(MainActivity.class);
 //        String channel = WalleChannelReader.getChannel(this.getApplicationContext());
 //        Bugly.setAppChannel(getApplicationContext(), channel);
-//        Bugly.init(getApplicationContext(), "d651589135", false);
+        Bugly.init(getApplicationContext(), "d651589135", false);
+       // Beta.tipsDialogLayoutId = R.layout.upgrade_dialog;
+        //Beta.upgradeDialogLayoutId = R.layout.upgrade_dialog;
 
     }
 
@@ -140,7 +163,7 @@ public class App extends Application {
         super.attachBaseContext(base);
         MultiDex.install(this);
         // 安装tinker
-     //   Beta.installTinker();
+        //   Beta.installTinker();
     }
 
     public void addActivity(Activity act) {
@@ -196,7 +219,10 @@ public class App extends Application {
 
 
     private void initUpush() {
+
         PushAgent mPushAgent = PushAgent.getInstance(this);
+
+
         handler = new Handler(getMainLooper());
 
         //sdk开启通知声音
@@ -285,16 +311,25 @@ public class App extends Application {
             @Override
             public void launchApp(Context context, UMessage msg) {
                 super.launchApp(context, msg);
+
             }
 
             @Override
             public void openUrl(Context context, UMessage msg) {
                 super.openUrl(context, msg);
+
             }
 
             @Override
             public void openActivity(Context context, UMessage msg) {
                 super.openActivity(context, msg);
+
+//                Map<String, String> map = msg.extra;
+//                value = map.get("key");
+//                Intent intent = new Intent(instance, MipushTestActivity.class);
+//                intent.putExtra("UMengMsg", value);
+//                startActivity(intent);
+//                Log.i(TAG, "openActivity: " + value);
             }
 
             @Override
@@ -311,6 +346,7 @@ public class App extends Application {
             public void onSuccess(String deviceToken) {
 
                 LogUtil.i(TAG, "device token: " + deviceToken);
+                Token = deviceToken;
                 sendBroadcast(new Intent(UPDATE_STATUS_ACTION));
 
             }
@@ -329,7 +365,7 @@ public class App extends Application {
         //小米通道
         MiPushRegistar.register(this, "2882303761517429082", "5481742981082");
         //华为通道
-        // HuaWeiRegister.register(this);
+        HuaWeiRegister.register(this);
         //魅族通道
         //MeizuRegister.register(this, MEIZU_APPID, MEIZU_APPKEY);
     }

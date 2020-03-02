@@ -8,6 +8,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.widget.Toast;
+
 import com.sina.weibo.sdk.api.share.IWeiboShareAPI;
 import com.sina.weibo.sdk.api.share.WeiboShareSDK;
 import com.tencent.mm.sdk.openapi.IWXAPI;
@@ -67,7 +69,8 @@ public class ShareUtil {
         }
 
         if (!mShareInstance.isInstall(activity)) {
-            mShareListener.shareFailure(new Exception(INFO.NOT_INSTALL));
+           // mShareListener.shareFailure(new Exception(INFO.NOT_INSTALL));
+            Toast.makeText(activity, "未安装该程序", Toast.LENGTH_SHORT).show();
             activity.finish();
             return;
         }
@@ -279,7 +282,7 @@ public class ShareUtil {
         @Override
         public void shareRequest() {
             ShareLogger.i(INFO.SHARE_REQUEST);
-            mShareListener.shareRequest();
+           // mShareListener.shareRequest();
         }
     }
 }

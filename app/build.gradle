@@ -263,27 +263,45 @@ dependencies {
     //implementation rootProject.ext.dependencies["update-app"]
 
     //bugly
-   // implementation rootProject.ext.dependencies["bugly"]
+    implementation rootProject.ext.dependencies["bugly"]
 
     // 指定tinker依赖版本（注：应用升级1.3.5版本起，不再内置tinker）
-    //implementation 'com.tencent.tinker:tinker-android-lib:1.9.9'
+    implementation 'com.tencent.tinker:tinker-android-lib:1.9.9'
 
     //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.1.9
-    //implementation rootProject.ext.dependencies["bugly-nativecrashreport"]
+    implementation rootProject.ext.dependencies["bugly-nativecrashreport"]
 
     //其中latest.release指代最新Bugly NDK版本号，也可以指定明确的版本号，例如3.0
 
     //PushSDK必须依赖基础组件库，所以需要加入对应依赖
-    implementation rootProject.ext.dependencies["umeng-common"]
-
-    //PushSDK必须依赖utdid库，所以需要加入对应依赖
-    implementation rootProject.ext.dependencies["umeng-utdid"]
-
-    //PushSDK
-    implementation rootProject.ext.dependencies["umeng-push"]
+//    implementation rootProject.ext.dependencies["umeng-common"]
+//
+//    //PushSDK必须依赖utdid库，所以需要加入对应依赖
+//    implementation rootProject.ext.dependencies["umeng-utdid"]
+//
+//    //PushSDK
+//    implementation rootProject.ext.dependencies["umeng-push"]
 
     //小米Push通道
-    implementation rootProject.ext.dependencies["umeng-xiaomi"]
+  //  implementation rootProject.ext.dependencies["umeng-xiaomi"]
+
+    //PushSDK必须依赖基础组件库，所以需要加入对应依赖
+    implementation 'com.umeng.umsdk:common:2.1.0'
+    //umeng统计
+    implementation  'com.umeng.umsdk:analytics:8.0.0'
+    //PushSDK必须依赖utdid库，所以需要加入对应依赖
+    implementation 'com.umeng.umsdk:utdid:1.1.5.3'
+    //PushSDK
+    implementation 'com.umeng.umsdk:push:6.0.1'
+
+    implementation 'com.umeng.umsdk:xiaomi-push:3.6.17'
+
+    implementation 'com.umeng.umsdk:xiaomi-umengaccs:1.1.0'
+
+    //华为Push通道
+    implementation 'com.umeng.umsdk:huawei-basetb:2.6.3.305'
+    implementation 'com.umeng.umsdk:huawei-pushtb:2.6.3.305'
+    implementation 'com.umeng.umsdk:huawei-umengaccs:1.2.1'
 
     implementation files('libs/jsoup-1.8.3.jar')
   //  implementation files('libs/BaiduLBS_Android.jar')

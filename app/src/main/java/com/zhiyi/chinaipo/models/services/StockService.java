@@ -1,5 +1,6 @@
 package com.zhiyi.chinaipo.models.services;
 
+import com.zhiyi.chinaipo.models.entity.articles.ArticlesEntity;
 import com.zhiyi.chinaipo.models.entity.details.AnnouncementEntity;
 import com.zhiyi.chinaipo.models.entity.ApiResponse;
 import com.zhiyi.chinaipo.models.entity.IndexSCEntity;
@@ -31,6 +32,14 @@ import retrofit2.http.Part;
 import retrofit2.http.Query;
 
 public interface StockService {
+
+    //搜索
+    @GET("articles/")
+    Flowable<ApiResponse<List<ArticlesEntity>>> newsSearch(@Query("search") String searchKey, @Query("page") int offset);
+
+
+    @GET("articles/")
+    Flowable<ApiResponse<List<ArticlesEntity>>> newsSearch(@Query("search") String searchKey, @Query("page") int offset, @Query("pageSize") int pageSize);
 
     @GET("indexSC/")
     Flowable<ApiResponse<List<IndexSCEntity>>> getIndexSC();

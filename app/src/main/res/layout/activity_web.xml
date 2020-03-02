@@ -5,15 +5,13 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/ll_back"
         android:layout_width="match_parent"
         android:layout_height="44dp"
-        android:layout_alignParentTop="true"
-        android:background="@android:color/white">
+        android:background="@color/white">
 
         <ImageView
             android:id="@+id/img_back"
@@ -45,8 +43,9 @@
         android:layout_height="1dp"
         android:background="@color/hui" />
 
-    <include
-        layout="@layout/item_loading"
-        android:visibility="gone" />
+
+    <!--<include-->
+    <!--layout="@layout/item_loading"-->
+    <!--android:visibility="gone" />-->
 
 </LinearLayout>

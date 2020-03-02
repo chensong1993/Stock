@@ -1,5 +1,6 @@
 package com.zhiyi.chinaipo.ui.fragment.news;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -9,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -23,6 +25,7 @@ import com.zhiyi.chinaipo.app.Constants;
 import com.zhiyi.chinaipo.base.BaseFragment;
 import com.zhiyi.chinaipo.base.connectors.news.ArticlesConnector;
 import com.zhiyi.chinaipo.components.RxBus;
+import com.zhiyi.chinaipo.models.entity.ApiResponse;
 import com.zhiyi.chinaipo.models.entity.IndexSCEntity;
 import com.zhiyi.chinaipo.models.entity.MarketIndexEntity;
 import com.zhiyi.chinaipo.models.entity.articles.ArticlesEntity;
@@ -31,11 +34,14 @@ import com.zhiyi.chinaipo.models.entity.articles.ColumnEntity;
 import com.zhiyi.chinaipo.models.entity.articles.TopicEntity;
 import com.zhiyi.chinaipo.models.entity.news.NewsSave;
 import com.zhiyi.chinaipo.models.event.TabTitle;
+import com.zhiyi.chinaipo.models.services.ApiService;
+import com.zhiyi.chinaipo.models.services.NewsService;
 import com.zhiyi.chinaipo.presenters.news.ArticlesPresenter;
 import com.zhiyi.chinaipo.ui.activity.NewsDetailActivity;
 import com.zhiyi.chinaipo.ui.activity.misc.WebActivity;
 import com.zhiyi.chinaipo.ui.activity.stocks.StockDetailActivity;
 import com.zhiyi.chinaipo.ui.adapter.news.NewAdapter;
+import com.zhiyi.chinaipo.ui.widget.CommonSubscriber;
 import com.zhiyi.chinaipo.ui.widget.GlideImage;
 import com.zhiyi.chinaipo.util.LogUtil;
 import com.zhiyi.chinaipo.util.RegUtil;
@@ -46,6 +52,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import butterknife.BindView;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * 首页新闻的展示
@@ -66,6 +74,8 @@ public class FirstNewsFragment extends BaseFragment<ArticlesPresenter> implement
     //轮播图下面的文字
     @BindView(R.id.tv_bannertitle)
     TextView mTitleBanner;
+//    @BindView(R.id.et_token)
+//    EditText mEtToken;
 
     /*@BindView(R.id.tv_time)
     TextView mTopUpdateTime;
@@ -119,6 +129,9 @@ public class FirstNewsFragment extends BaseFragment<ArticlesPresenter> implement
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+//        mEtToken.setText(App.Token);
+        mPresenter.getBanner();
+         mPresenter.getArticles(0);
         categoryId = getArguments().getInt(Constants.NEWS_CATEGORY_ID);
         mList = new ArrayList<>();
         //mStockMarketIndexes = new ArrayList<>();
@@ -130,9 +143,6 @@ public class FirstNewsFragment extends BaseFragment<ArticlesPresenter> implement
         mBanner.setImageLoader(new GlideImage());
         mBanner.setFocusableInTouchMode(true);
         mBanner.requestFocus();
-        mPresenter.getBanner();
-        // mPresenter.getIndexSC();
-        mPresenter.getArticles(0);
         // mPresenter.getStockIndex();
         setupRefresh();
         //监听是否到状态栏变化的高度
@@ -163,6 +173,7 @@ public class FirstNewsFragment extends BaseFragment<ArticlesPresenter> implement
     }
 
 
+    @SuppressLint("CheckResult")
     @Override
     protected void initEventAndData() {
        /* categoryId = getArguments().getInt(Constants.NEWS_CATEGORY_ID);
@@ -185,10 +196,10 @@ public class FirstNewsFragment extends BaseFragment<ArticlesPresenter> implement
 
     @Override
     public void homeIndex(int index) {
-       // LogUtil.i("indexhome", "" + categoryId);
+        // LogUtil.i("indexhome", "" + categoryId);
         if (index == 0) {
             mScrollView.scrollTo(0, 0);
-         //   LogUtil.i("indexhome", "" + categoryId);
+            //   LogUtil.i("indexhome", "" + categoryId);
             mSmartRefreshLayout.autoRefresh();
         }
     }
@@ -211,7 +222,7 @@ public class FirstNewsFragment extends BaseFragment<ArticlesPresenter> implement
             changeReadState(list.get(i));
         }
 
-        LogUtil.i("showAnnouncements", list.size() + "2");
+        LogUtil.i("showAnnouncements", list.size() + "");
     }
 
 
@@ -247,6 +258,16 @@ public class FirstNewsFragment extends BaseFragment<ArticlesPresenter> implement
         });
     }
 
+    @Override
+    public void showErr() {
+        Log.i("showErr", "showErr: ");
+        mSmartRefreshLayout.finishRefresh();
+    }
+
+    @Override
+    public void moreErr() {
+        mSmartRefreshLayout.finishLoadmoreWithNoMoreData();
+    }
 
     @Override
     public void showBanner(List<BannerEntity> banners) {
@@ -264,45 +285,59 @@ public class FirstNewsFragment extends BaseFragment<ArticlesPresenter> implement
             @Override
             public void OnBannerClick(int position) {
                 String currentUrl = banners.get(position).getDestUrl();
+                Log.i("getDestUrl", "OnBannerClick: "+currentUrl);
                 int gotNewsID = RegUtil.getNewsId(currentUrl);
                 String gotStockID = RegUtil.getStockId(currentUrl);
                 String gotChannelName = RegUtil.getChannelName(currentUrl);
                 if (currentUrl == null) {
                     return;
                 }
-                if (!RegUtil.isChinaIPOContent(currentUrl)) {
+                if (currentUrl.endsWith("html")) {
                     WebActivity.launch(new WebActivity.Builder()
                             .setContext(mContext)
                             .setTitle(banners.get(position).getTitle())
-                            .setUrl(banners.get(position).getDestUrl())
+                            .setUrl(banners.get(position).getDestUrl()+"?utm_source=app")
                     );
-                    LogUtil.i("1", "1");
-                } else if (gotStockID != null) {
-
-                    StockDetailActivity.launch(new StockDetailActivity.Builder()
-                            .setStockCode(gotStockID)
-                            .setContext(mContext)
-                            .setActivity(mActivity));
-                    LogUtil.i("1", "2");
-                } else if (gotNewsID != -1) {
-                    LogUtil.i("gotStockID", gotNewsID + "");
+                }else {
                     NewsDetailActivity.launch(new NewsDetailActivity.Builder()
                             .setActivity(mActivity)
                             .setContext(mContext)
                             .setOriginalId(gotNewsID));
-                    LogUtil.i("1", "3");
-                } else if (gotChannelName != null) {
-                    if (gotChannelName.equals("ipo")) {
-                        RxBus.getDefault().post(new TabTitle(2));
-                    } else if (gotChannelName.equals("zjxsb") || gotChannelName.equals("jhj")) {
-                        WebActivity.launch(new WebActivity.Builder()
-                                .setContext(mContext)
-                                .setTitle(banners.get(position).getTitle())
-                                .setUrl(banners.get(position).getDestUrl())
-                        );
-                    }
-                    LogUtil.i("1", "4");
                 }
+//                if (!RegUtil.isChinaIPOContent(currentUrl)) {
+//                    WebActivity.launch(new WebActivity.Builder()
+//                            .setContext(mContext)
+//                            .setTitle(banners.get(position).getTitle())
+//                            .setUrl(banners.get(position).getDestUrl())
+//                    );
+//                    LogUtil.i("1", "1");
+//
+//                } else if (gotStockID != null) {
+//
+//                    StockDetailActivity.launch(new StockDetailActivity.Builder()
+//                            .setStockCode(gotStockID)
+//                            .setContext(mContext)
+//                            .setActivity(mActivity));
+//                    LogUtil.i("1", "2");
+//                } else if (gotNewsID != -1) {
+//                    LogUtil.i("gotStockID", gotNewsID + "");
+//                    NewsDetailActivity.launch(new NewsDetailActivity.Builder()
+//                            .setActivity(mActivity)
+//                            .setContext(mContext)
+//                            .setOriginalId(gotNewsID));
+//                    LogUtil.i("1", "3");
+//                } else if (gotChannelName != null) {
+//                    if (gotChannelName.equals("ipo")) {
+//                        RxBus.getDefault().post(new TabTitle(2));
+//                    } else if (gotChannelName.equals("zjxsb") || gotChannelName.equals("jhj")) {
+//                        WebActivity.launch(new WebActivity.Builder()
+//                                .setContext(mContext)
+//                                .setTitle(banners.get(position).getTitle())
+//                                .setUrl(banners.get(position).getDestUrl())
+//                        );
+//                    }
+             //       LogUtil.i("1", "4");
+            //    }
             }
         });
 
@@ -428,16 +463,6 @@ public class FirstNewsFragment extends BaseFragment<ArticlesPresenter> implement
 
     }
 
-
-    @Override
-    public void showErr() {
-        mSmartRefreshLayout.finishRefresh();
-    }
-
-    @Override
-    public void moreErr() {
-        mSmartRefreshLayout.finishLoadmoreWithNoMoreData();
-    }
 
     @Override
     public void onDestroy() {

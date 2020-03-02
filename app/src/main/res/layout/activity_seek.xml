@@ -100,6 +100,7 @@
             android:layout_marginTop="40dp"
             android:gravity="center"
             android:text="指定搜索内容"
+            android:visibility="gone"
             android:textColor="@color/hui7"
             android:textSize="12dp" />
 
@@ -112,6 +113,7 @@
         android:layout_below="@id/ll_search"
         android:layout_centerHorizontal="true"
         android:layout_marginRight="140dp"
+        android:visibility="gone"
         android:orientation="horizontal">
 
         <TextView
@@ -124,27 +126,27 @@
             android:textColor="@color/blue"
             android:textSize="12dp" />
 
-        <TextView
-            android:layout_width="1dp"
-            android:layout_height="12dp"
-            android:layout_gravity="center_vertical"
-            android:background="@color/hui7" />
+        <!--<TextView-->
+            <!--android:layout_width="1dp"-->
+            <!--android:layout_height="12dp"-->
+            <!--android:layout_gravity="center_vertical"-->
+            <!--android:background="@color/hui7" />-->
 
-        <TextView
-            android:id="@+id/tv_hangqing"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="行情"
-            android:textColor="@color/blue"
-            android:textSize="12dp" />
+        <!--<TextView-->
+            <!--android:id="@+id/tv_hangqing"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:gravity="center"-->
+            <!--android:text="行情"-->
+            <!--android:textColor="@color/blue"-->
+            <!--android:textSize="12dp" />-->
 
-        <TextView
-            android:layout_width="1dp"
-            android:layout_height="12dp"
-            android:layout_gravity="center_vertical"
-            android:background="@color/hui7" />
+        <!--<TextView-->
+            <!--android:layout_width="1dp"-->
+            <!--android:layout_height="12dp"-->
+            <!--android:layout_gravity="center_vertical"-->
+            <!--android:background="@color/hui7" />-->
 
         <TextView
             android:id="@+id/tv_author"

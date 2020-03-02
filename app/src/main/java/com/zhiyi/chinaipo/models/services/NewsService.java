@@ -13,11 +13,15 @@ import com.zhiyi.chinaipo.models.entity.articles.TopicEntity;
 import java.util.List;
 
 import io.reactivex.Flowable;
+import io.reactivex.Observable;
+import io.reactivex.Single;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.Query;
 
 public interface NewsService {
+
+
 
     @GET("articles/")
     Flowable<ApiResponse<List<ArticlesEntity>>> articles(@Query("categoryId") int categoryId, @Query("page") int offset);

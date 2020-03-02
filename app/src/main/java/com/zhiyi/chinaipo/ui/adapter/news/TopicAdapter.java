@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.zhiyi.chinaipo.R;
 import com.zhiyi.chinaipo.components.ImageLoader;
 import com.zhiyi.chinaipo.models.entity.articles.TopicEntity;
+import com.zhiyi.chinaipo.ui.activity.misc.WebActivity;
 import com.zhiyi.chinaipo.ui.activity.news.SpecialColumnActivity;
 import com.zhiyi.chinaipo.ui.activity.news.SpecialTopicActivity;
 
@@ -50,16 +51,33 @@ public class TopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             @Override
             public void onClick(View view) {
                 if (categoryId == 15) {
-                    SpecialTopicActivity.launch(new SpecialTopicActivity.Builder()
-                            .setContext(mContext)
-                            .setContent(list.get(position).getCore_ideas())
-                            .setOriginalId(list.get(position).getOrig_reference())
-                            .setId(position));
+
+                    if (list.get(position).getHref_url() != null && !list.get(position).getHref_url().isEmpty()) {
+                        WebActivity.launch(new WebActivity.Builder()
+                                .setContext(mContext)
+                                .setTitle(list.get(position).getCore_ideas())
+                                .setUrl(list.get(position).getHref_url())
+                        );
+                    } else {
+                        SpecialTopicActivity.launch(new SpecialTopicActivity.Builder()
+                                .setContext(mContext)
+                                .setContent(list.get(position).getCore_ideas())
+                                .setOriginalId(list.get(position).getOrig_reference())
+                                .setId(position));
+                    }
                 } else {
-                    SpecialColumnActivity.launch(new SpecialColumnActivity.Builder()
-                            .setContext(mContext)
-                            .setTitle(list.get(position).getRelated_name())
-                            .setId(position));
+                    if (list.get(position).getHref_url() != null && !list.get(position).getHref_url().isEmpty()) {
+                        WebActivity.launch(new WebActivity.Builder()
+                                .setContext(mContext)
+                                .setTitle(list.get(position).getRelated_name())
+                                .setUrl(list.get(position).getHref_url())
+                        );
+                    } else {
+                        SpecialColumnActivity.launch(new SpecialColumnActivity.Builder()
+                                .setContext(mContext)
+                                .setTitle(list.get(position).getRelated_name())
+                                .setId(position));
+                    }
                 }
 
             }
@@ -82,7 +100,7 @@ public class TopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         public ViewHolder(final View item) {
             super(item);
             //新闻图片
-            mimageView =  item.findViewById(R.id.iv_column_detail_pic);
+            mimageView = item.findViewById(R.id.iv_column_detail_pic);
             //内容
             mtitle = (TextView) item.findViewById(R.id.tv_column_detail_title);
         }
@@ -97,10 +115,10 @@ public class TopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             } else {
                 mtitle.setText(items.getName());
             }
-          //  LogUtil.i("top","ok"+list.size());
-          //  Glide.with(mContext).load(items.getDestUrl()).override(150, 100).fitCenter().into(mimageView);
+            //  LogUtil.i("top","ok"+list.size());
+            //  Glide.with(mContext).load(items.getDestUrl()).override(150, 100).fitCenter().into(mimageView);
             ImageLoader.load(mContext, items.getDestUrl(), mimageView);
-            }
+        }
 
     }
 

@@ -198,7 +198,7 @@
     <string name="x_registers">注 册</string>
     <string name="x_quanzhan_search">全站搜索</string>
     <string name="x_search">搜索</string>
-    <string name="x_zixun">首页</string>
+    <string name="x_zixun">资讯</string>
     <string name="x_hangqing">行情</string>
     <string name="x_author">作者</string>
     <string name="x_shequ_bangding">社区号绑定</string>
@@ -308,6 +308,7 @@
     <string name="weitianxie">未填写</string>
     <string name="x_brand">品牌</string>
 
+
     <!--分时一列的-->
     <string-array name="data_xinguguapia">
         <item>本月</item>
@@ -382,4 +383,5 @@
     </string-array>
 
 
+    <string name="agreement">感谢您对资本邦的信任！\n\n 我们依据最新的监管要求更新了《隐私权政策》和《服务协议》，特向您说明如下:\n\n 1.为向您提供咨询服务，我们会收集，使用必要的信息;\n\n 2.基于您的明示授权，我们可能会获取您的位置等信息，您有权拒绝或取消授权;\n\n 3.我们会采取业界先进的安全措施保护您的信息安全;\n\n 4.未经您的同意，我们不会从第三方处获取、共享或向其提供您的信息; ;</string>
 </resources>

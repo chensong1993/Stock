@@ -159,9 +159,9 @@ public class ArticlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
 
         void refreshView() {
-            mtext.setText(items.getAuthor());
+          //  mtext.setText(items.getAuthor());
             mtitle.setText(items.getTitle());
-            mtitle1.setText(items.getNewsType());
+          //  mtitle1.setText(items.getNewsType());
 //            Glide.with(mContent).load(items.getTitlepic()).into(mimageView);
         }
     }

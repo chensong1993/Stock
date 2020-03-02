@@ -1,19 +1,33 @@
 package com.zhiyi.chinaipo.ui.activity;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.webkit.WebChromeClient;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.just.agentweb.AgentWeb;
+import com.just.agentweb.DefaultWebClient;
 import com.just.agentweb.download.AgentWebDownloader;
 import com.just.agentweb.download.DownloadingService;
 import com.shizhefei.guide.GuideHelper;
 import com.tbruyelle.rxpermissions2.RxPermissions;
+import com.tencent.bugly.beta.Beta;
+import com.tencent.bugly.beta.UpgradeInfo;
+import com.tencent.bugly.beta.ui.UILifecycleListener;
 import com.zhiyi.chinaipo.R;
 import com.zhiyi.chinaipo.base.RootActivity;
 import com.zhiyi.chinaipo.base.connectors.main.MainConnector;
@@ -26,11 +40,14 @@ import com.zhiyi.chinaipo.ui.widget.navigation.BottomNavigation;
 import com.zhiyi.chinaipo.ui.widget.navigation.BottomNavigationAdapter;
 import com.zhiyi.chinaipo.ui.widget.navigation.BottomNavigationViewPager;
 import com.zhiyi.chinaipo.util.ActivityCollector;
+import com.zhiyi.chinaipo.util.DestroyActivityUtil;
 import com.zhiyi.chinaipo.util.DisplayUtils;
+import com.zhiyi.chinaipo.util.LogUtil;
 import com.zhiyi.chinaipo.util.SPHelper;
 import com.zhiyi.chinaipo.util.ToastUtil;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 //import com.zhiyi.chinaipo.ui.fragment.main.AboutFragment;
 //import com.zhiyi.chinaipo.ui.main.fragment.LikeFragment;
@@ -38,6 +55,7 @@ import butterknife.BindView;
 
 public class MainActivity extends RootActivity<MainPresenter> implements MainConnector.View {
 
+    private static final String TAG = "MainActivity";
     // UI
     @BindView(R.id.view_pager)
     BottomNavigationViewPager viewPager;
@@ -45,13 +63,13 @@ public class MainActivity extends RootActivity<MainPresenter> implements MainCon
     BottomNavigation bottomNavigation;
     @BindView(R.id.ll_dow)
     LinearLayout mLinearLayout;
-    AgentWeb mAgentWeb;
     long mBackTime;
     // Adapter
     private MainViewPagerAdapter adapter;
     private DownloadingService mDownloadingService;
     private AgentWebDownloader.ExtraService mExtraService;
     int[] index = new int[4];
+
     //homeIndex homeIndex;
     @Override
     protected void initInject() {
@@ -70,6 +88,9 @@ public class MainActivity extends RootActivity<MainPresenter> implements MainCon
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+        //将activity 添加 以便在特定节点关闭
+        DestroyActivityUtil.addDestoryActivityToMap(this, "MainActivity");
         //检测该类是否打开
         ActivityCollector.addActivity(this, getClass());
         // 隐藏导航栏Items
@@ -110,7 +131,10 @@ public class MainActivity extends RootActivity<MainPresenter> implements MainCon
         adapter = new MainViewPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
 
+
     }
+
+
 
 
     //点击底部刷新数据
@@ -130,7 +154,23 @@ public class MainActivity extends RootActivity<MainPresenter> implements MainCon
     protected void initEventAndData() {
         //   showExitDialog();
         setSwipeBackEnable(false);
+
     }
+
+    private WebViewClient mWebViewClient = new WebViewClient() {
+
+        @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            // mRlProgress.setVisibility(View.GONE);
+            LogUtil.i("Info", "BaseWebActivity onPageStarted");
+        }
+    };
+    private WebChromeClient mWebChromeClient = new WebChromeClient() {
+        @Override
+        public void onProgressChanged(WebView view, int newProgress) {
+//            LogUtil.i("Info","progress:"+newProgress);
+        }
+    };
 
     private void initGuide() {
         String only = SPHelper.get("MainOnly", "");
@@ -166,6 +206,7 @@ public class MainActivity extends RootActivity<MainPresenter> implements MainCon
         return super.onKeyDown(keyCode, event);
     }
 
+
     @Override
     public void showUpdateDialog(String versionContent) {
         android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(this);
@@ -179,6 +220,8 @@ public class MainActivity extends RootActivity<MainPresenter> implements MainCon
             }
         });
         builder.show();
+
+
     }
 
     @Override

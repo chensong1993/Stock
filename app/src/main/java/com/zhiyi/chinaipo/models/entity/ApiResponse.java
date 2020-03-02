@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class ApiResponse<T> implements Serializable{
     private int count;
     private String next;
-    private String prev;
+    private String previous;
     private T results;
 
     public int getCount() {
@@ -24,12 +24,12 @@ public class ApiResponse<T> implements Serializable{
         this.next = next;
     }
 
-    public String getPrev() {
-        return prev;
+    public String getPrevious() {
+        return previous;
     }
 
-    public void setPrev(String prev) {
-        this.prev = prev;
+    public void setPrevious(String previous) {
+        this.previous = previous;
     }
 
     public T getResults() {

@@ -1,6 +1,7 @@
 package com.zhiyi.chinaipo.ui.fragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,7 +14,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.flyco.tablayout.SlidingTabLayout;
+import com.jakewharton.rxbinding3.view.RxView;
 import com.tbruyelle.rxpermissions2.RxPermissions;
+import com.tencent.bugly.beta.Beta;
+import com.tencent.bugly.beta.UpgradeInfo;
+import com.tencent.bugly.beta.ui.UILifecycleListener;
 import com.zhiyi.chinaipo.R;
 import com.zhiyi.chinaipo.app.Constants;
 import com.zhiyi.chinaipo.base.BaseFragment;
@@ -39,14 +44,17 @@ import com.zhiyi.chinaipo.util.SystemUtil;
 import com.zhiyi.chinaipo.util.ToastUtil;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 
 
 public class HomeFragment extends BaseFragment<CategoryPresenter> implements CategoryConnector.View {
-
+    private static final String TAG="HomeFragment";
     public final static int COLUMN_MANAGE_REQUEST = 1;
     public final static int COLUMN_MANAGE_RESULT = 2;
     // TabLayout mTabLayout;
@@ -68,10 +76,7 @@ public class HomeFragment extends BaseFragment<CategoryPresenter> implements Cat
     TextView mStatusBarView;
     NewsFragmentStatePagerAdapter mViewPagerAdapetr;
     List<CategoryEntity> userColumnList;
-    List<CategoryEntity> otherList;
     List<CategoryEntity> AllColumnList;
-    List<CategoryEntity> AllList;
-    List<CategoryEntity> userList;
     private ArrayList<Fragment> fragments;
     //新闻首页
     LatterNewsFragment mLatterFragment;
@@ -119,13 +124,15 @@ public class HomeFragment extends BaseFragment<CategoryPresenter> implements Cat
         LogUtil.i("132131", "13212132");
         fragments = new ArrayList<>();
         userColumnList = new ArrayList<>();
-        otherList = new ArrayList<>();
         mPresenter.getCategories(1);
         mPresenter.getCategoriesTwo(2);
         initColumnData();
-        StatusBarUtil.enableTranslucentStatusbar(getActivity(), mStatusBarView, 0);
+       // StatusBarUtil.enableTranslucentStatusbar(getActivity(), mStatusBarView, 0);
         stateLoading();
         checkPermissions();
+
+
+
 
     }
 
@@ -271,18 +278,12 @@ public class HomeFragment extends BaseFragment<CategoryPresenter> implements Cat
 
     @OnClick(R.id.rl_seek)
     void clickedSearch() {
-//        RxView.clicks(mImgSearch).throttleFirst(1, TimeUnit.SECONDS).subscribe(new Consumer<Unit>() {
-//            @Override
-//            public void accept(Unit unit) throws Exception {
-
-//            }
-//        });
-         if (!RepeatCllickUtil.isFastDoubleClick()) {
-             startActivity(new Intent(getActivity(), SearchActivity.class));
-        //  SnackbarUtil.showShort(getActivity().getWindow().getDecorView(), "搜索出现了问题");
+        if (!RepeatCllickUtil.isFastDoubleClick()) {
+            startActivity(new Intent(getActivity(), SearchActivity.class));
+            //  SnackbarUtil.showShort(getActivity().getWindow().getDecorView(), "搜索出现了问题");
             // Cinematics.searchCinematics(getActivity(), mImgSearch);
 
-          }
+        }
     }
 
     @OnClick(R.id.rl_img)
@@ -305,72 +306,49 @@ public class HomeFragment extends BaseFragment<CategoryPresenter> implements Cat
             if (SPHelper.getDataList(ColumnActivity.OTHER_LIST) != null) {
                 AllColumnList.addAll(SPHelper.getDataList(ColumnActivity.OTHER_LIST));
             }
-            if (SPHelper.getDataList(ColumnActivity.USER_LIST) != null) {
-                AllColumnList = SPHelper.getDataList(ColumnActivity.USER_LIST);
-                if (SPHelper.getDataList(ColumnActivity.OTHER_LIST) != null) {
-                    AllColumnList.addAll(SPHelper.getDataList(ColumnActivity.OTHER_LIST));
-                }
-                //遍历对比网络请求的数据个本地数据
-                userColumnList = SPHelper.getDataList(ColumnActivity.USER_LIST);
-                otherList = SPHelper.getDataList(ColumnActivity.OTHER_LIST);
-                //检测网络获取的频道是否有删减
-                //合并网络请求的我的频道和频道推荐
-                if (SystemUtil.isNetworkConnected()) {
-                    AllList = SPHelper.getDataList(ColumnActivity.SP_USER_LIST);
-                    AllList.addAll(SPHelper.getDataList(ColumnActivity.SP_OTHER_LIST));
-                    for (CategoryEntity entity : AllColumnList) {
-                        //如果本地有多余的频道进行排查到底实在我的频道还是在推荐中然后进行删除
-                        if (!AllList.contains(entity)) {
-                            for (int i = 0; i < userColumnList.size(); i++) {
-                                if (userColumnList.get(i).equals(entity)) {
-                                    userColumnList.remove(entity);
-                                    SPHelper.setDataList(ColumnActivity.USER_LIST, userColumnList);
-                                    LogUtil.i("sadasdasdada", entity.getName());
-                                }
-                            }
-                            for (int i = 0; i < otherList.size(); i++) {
-                                if (otherList.equals(entity)) {
-                                    otherList.remove(entity);
-                                    SPHelper.setDataList(ColumnActivity.OTHER_LIST, otherList);
-                                    LogUtil.i("sadasdasdada", entity.getName());
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+
+            userColumnList = SPHelper.getDataList(ColumnActivity.USER_LIST);
         }
     }
 
     @Override
     public void updateCategories(List<CategoryEntity> lists) {
-        SPHelper.setDataList(ColumnActivity.SP_USER_LIST, lists);
         if (SPHelper.getDataList(ColumnActivity.USER_LIST).size() > 0) {
-            //  userColumnList = SPHelper.getDataList(ColumnActivity.USER_LIST);
-            LogUtil.i("111111111111111", userColumnList.toString());
-            //检测网络获取的频道是否有增加
-            for (CategoryEntity list : lists) {
-                LogUtil.i("1", "2");
-                //判断网络的频道和本地保存的完全相等就直接引用sp里面的
-                if (!AllColumnList.contains(list)) {
-                    userColumnList.add(list);
-                    LogUtil.i("没有的值1", list.toString() + "");
-                }
+            Set set = new HashSet();
+            set.addAll(AllColumnList);
+            //   LogUtil.i("AllColumnList", set.containsAll(lists) + "");
+            //判断网络的频道和本地保存的完全相等就直接引用sp里面的
+            if (!set.containsAll(lists)) {
+                userColumnList.addAll(lists);
+                removeDuplicateWithOrder(userColumnList);
+                LogUtil.i("有的值11", userColumnList.toString());
             }
-            initTabColumn();
-            initFragment();
-
         } else {
             userColumnList = lists;
-            initTabColumn();
-            initFragment();
         }
+        SPHelper.setDataList(ColumnActivity.SP_USER_LIST, userColumnList);
+        initTabColumn();
+        initFragment();
         if (userColumnList.size() > 0) {
             mTvRequest.setVisibility(View.GONE);
             mViewPager.setVisibility(View.VISIBLE);
         } else {
             mViewPager.setVisibility(View.GONE);
         }
+    }
+
+    // 删除ArrayList中重复元素，保持顺序
+    public static void removeDuplicateWithOrder(List<CategoryEntity> list) {
+        Set set = new HashSet();
+        List newList = new ArrayList();
+        for (Iterator iter = list.iterator(); iter.hasNext(); ) {
+            Object element = iter.next();
+            if (set.add(element))
+                newList.add(element);
+        }
+        list.clear();
+        list.addAll(newList);
+        LogUtil.i("有的值11", list.toString());
     }
 
     @OnClick(R.id.tv_request)
@@ -396,6 +374,7 @@ public class HomeFragment extends BaseFragment<CategoryPresenter> implements Cat
         if (userColumnList.size() > 0) {
             int count = userColumnList.size();
             for (int i = 0; i < count; i++) {
+               // LogUtil.i("userColumnList", "" + userColumnList.get(i).getId());
                 Bundle data = new Bundle();
                 data.putInt(Constants.NEWS_CATEGORY_ID, userColumnList.get(i).getId());
                 data.putString(Constants.NEWS_CATEGORY_NAME, userColumnList.get(i).getName());
@@ -418,7 +397,7 @@ public class HomeFragment extends BaseFragment<CategoryPresenter> implements Cat
                     fragments.add(mLatterFragment);
                 }
             }
-            //  LogUtil.i("userColumnList", "" + j);
+
 
         }
 
@@ -586,7 +565,7 @@ public class HomeFragment extends BaseFragment<CategoryPresenter> implements Cat
     //onPause()方法注销
     @Override
     public void onPause() {
-       // mContext.unregisterReceiver(mNetBroadcastReceiver);
+        // mContext.unregisterReceiver(mNetBroadcastReceiver);
         super.onPause();
     }
 

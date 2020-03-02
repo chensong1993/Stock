@@ -1,5 +1,7 @@
 package com.zhiyi.chinaipo.util;
 
+import android.util.Log;
+
 import com.zhiyi.chinaipo.models.entity.ApiResponse;
 import com.zhiyi.chinaipo.models.entity.WeatherEntity;
 
@@ -24,6 +26,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class RxUtils {
 
+    public static final String TAG="RxUtils";
     /**
      * 统一线程处理
      *
@@ -74,6 +77,7 @@ public class RxUtils {
                     @Override
                     public Flowable<T> apply(ApiResponse<T> tHttpResponse) {
                         if (tHttpResponse.getCount() > 0) {
+                            Log.i(TAG, tHttpResponse.getCount()+"");
                             return createData(tHttpResponse.getResults());
                         } else {
                             return Flowable.error(new Exception("服务器返回error : " + tHttpResponse.getCount()));

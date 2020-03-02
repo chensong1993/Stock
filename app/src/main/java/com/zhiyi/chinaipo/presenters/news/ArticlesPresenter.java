@@ -36,7 +36,6 @@ public class ArticlesPresenter extends RxPresenter<ArticlesConnector.View> imple
 
     public static final int NUM_OF_PAGE = 20;
 
-    private int currentPage = 1;
 
     @Inject
     public ArticlesPresenter(DataManager mDataManager) {
@@ -52,8 +51,7 @@ public class ArticlesPresenter extends RxPresenter<ArticlesConnector.View> imple
 
     @Override
     public void getArticles(int categoryId) {
-        currentPage = 1;
-        addSubscribe(mDataManager.getArticles(categoryId)
+        addSubscribe(mDataManager.getArticles(categoryId,1)
                         .compose(RxUtils.<ApiResponse<List<ArticlesEntity>>>rxSchedulerHelper())
                         .compose(RxUtils.<List<ArticlesEntity>>handleResults())
                         .subscribeWith(new CommonSubscriber<List<ArticlesEntity>>(mView) {
@@ -66,7 +64,6 @@ public class ArticlesPresenter extends RxPresenter<ArticlesConnector.View> imple
                             public void onError(Throwable e) {
                                 e.printStackTrace();
                                 mView.showErr();
-//                        ToastUtils.showLongToast("Can not load issues");
                             }
                         })
         );
@@ -106,26 +103,26 @@ public class ArticlesPresenter extends RxPresenter<ArticlesConnector.View> imple
                 }));
     }
 
-    private String parseId(String str) {
-        int idEnd = str.indexOf("#");
-        return str.substring(3, idEnd);
-    }
-
-    private String parseTime(String str) {
-        int timeEnd = str.indexOf("  •");
-        if (timeEnd == -1) {
-            return str;
-        }
-        return str.substring(0, timeEnd);
-    }
-
-    public static String parseImg(String str) {
-        return "http:" + str;
-    }
+//    private String parseId(String str) {
+//        int idEnd = str.indexOf("#");
+//        return str.substring(3, idEnd);
+//    }
+//
+//    private String parseTime(String str) {
+//        int timeEnd = str.indexOf("  •");
+//        if (timeEnd == -1) {
+//            return str;
+//        }
+//        return str.substring(0, timeEnd);
+//    }
+//
+//    public static String parseImg(String str) {
+//        return "http:" + str;
+//    }
 
     @Override
     public void getMoreArticles(int categoryId, int pageOffset) {
-        addSubscribe(mDataManager.getMoreArticles(categoryId, ++currentPage)
+        addSubscribe(mDataManager.getMoreArticles(categoryId, pageOffset)
                 .compose(RxUtils.<ApiResponse<List<ArticlesEntity>>>rxSchedulerHelper())
                 .compose(RxUtils.<List<ArticlesEntity>>handleResults())
                 .subscribeWith(new CommonSubscriber<List<ArticlesEntity>>(mView, false) {

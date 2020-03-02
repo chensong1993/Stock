@@ -34,7 +34,7 @@ public class LatterArticlesPresenter extends RxPresenter<LatterArticlesConnector
 
     @Override
     public void getArticles(int categoryId) {
-        addSubscribe(mDataManager.getArticles(categoryId)
+        addSubscribe(mDataManager.getArticles(categoryId,1)
                 .compose(RxUtils.<ApiResponse<List<ArticlesEntity>>>rxSchedulerHelper())
                 .compose(RxUtils.<List<ArticlesEntity>>handleResults())
                 .subscribeWith(new CommonSubscriber<List<ArticlesEntity>>(mView, false) {

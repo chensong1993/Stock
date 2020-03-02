@@ -165,8 +165,8 @@ public class DataManager implements HttpHelper, DBHelper, PreferencesHelper {
     }
 
     @Override
-    public Flowable<ApiResponse<List<ArticlesEntity>>> getArticles(int categoryId) {
-        return mHttpHelper.getArticles(categoryId);
+    public Flowable<ApiResponse<List<ArticlesEntity>>> getArticles(int categoryId,int page) {
+        return mHttpHelper.getArticles(categoryId,page);
     }
 
     @Override
@@ -552,6 +552,16 @@ public class DataManager implements HttpHelper, DBHelper, PreferencesHelper {
     @Override
     public Flowable<WeatherEntity<H3>> weatherData(String appKey, String area) {
         return mHttpHelper.weatherData(appKey,area);
+    }
+
+    @Override
+    public Flowable<ApiResponse<List<ArticlesEntity>>> newsSearch(String searchKey, int offset) {
+        return mHttpHelper.newsSearch(searchKey, offset);
+    }
+
+    @Override
+    public Flowable<ApiResponse<List<ArticlesEntity>>> newsSearch(String searchKey, int offset, int size) {
+        return mHttpHelper.newsSearch(searchKey, offset, size);
     }
 
 

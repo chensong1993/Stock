@@ -36,8 +36,8 @@ public class SearchChoosePopup extends BasePopupWindow implements View.OnClickLi
 
     @BindView(R.id.tv_zixun)
     TextView mTvNews;
-    @BindView(R.id.tv_hangqing)
-    TextView mTvStock;
+//    @BindView(R.id.tv_hangqing)
+//    TextView mTvStock;
     @BindView(R.id.tv_author)
     TextView mTvAuthor;
     @BindView(R.id.tv_quanbu)
@@ -50,17 +50,17 @@ public class SearchChoosePopup extends BasePopupWindow implements View.OnClickLi
         this.mSearchType = searchType;
         this.mSearchKey = searchKey;
         mTvNews = (TextView) findViewById(R.id.tv_zixun);
-        mTvStock = (TextView) findViewById(R.id.tv_hangqing);
+       // mTvStock = (TextView) findViewById(R.id.tv_hangqing);
         mTvAuthor = (TextView) findViewById(R.id.tv_author);
         mTvAll = (TextView) findViewById(R.id.tv_quanbu);
-        setViewClickListener(this, mTvNews, mTvStock, mTvAuthor, mTvAll);
+        setViewClickListener(this, mTvNews, mTvAuthor, mTvAll);
 
         setupDefaultColor();
     }
 
     private void setupDefaultColor() {
         mTvNews.setTextColor(ContextCompat.getColor(mContext, R.color.blue));
-        mTvStock.setTextColor(ContextCompat.getColor(mContext, R.color.blue));
+       // mTvStock.setTextColor(ContextCompat.getColor(mContext, R.color.blue));
         mTvAuthor.setTextColor(ContextCompat.getColor(mContext, R.color.blue));
         mTvAll.setTextColor(ContextCompat.getColor(mContext, R.color.blue));
 
@@ -68,9 +68,9 @@ public class SearchChoosePopup extends BasePopupWindow implements View.OnClickLi
             case Constants.SEARCHING_TYPE_NEWS:
                 mTvNews.setTextColor(ContextCompat.getColor(mContext, R.color.gray));
                 break;
-            case Constants.SEARCHING_TYPE_STOCK:
-                mTvStock.setTextColor(ContextCompat.getColor(mContext, R.color.gray));
-                break;
+//            case Constants.SEARCHING_TYPE_STOCK:
+//                mTvStock.setTextColor(ContextCompat.getColor(mContext, R.color.gray));
+//                break;
             case Constants.SEARCHING_TYPE_AUTHOR:
                 mTvAuthor.setTextColor(ContextCompat.getColor(mContext, R.color.gray));
                 break;
@@ -112,9 +112,9 @@ public class SearchChoosePopup extends BasePopupWindow implements View.OnClickLi
             case R.id.tv_zixun:
                 RxBus.getDefault().post(new SearchEvent(mSearchKey, Constants.SEARCHING_TYPE_NEWS));
                 break;
-            case R.id.tv_hangqing:
-                RxBus.getDefault().post(new SearchEvent(mSearchKey, Constants.SEARCHING_TYPE_STOCK));
-                break;
+//            case R.id.tv_hangqing:
+//                RxBus.getDefault().post(new SearchEvent(mSearchKey, Constants.SEARCHING_TYPE_STOCK));
+//                break;
             case R.id.tv_author:
                 RxBus.getDefault().post(new SearchEvent(mSearchKey, Constants.SEARCHING_TYPE_AUTHOR));
                 break;

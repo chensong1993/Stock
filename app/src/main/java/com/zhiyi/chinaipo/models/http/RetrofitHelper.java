@@ -53,12 +53,13 @@ public class RetrofitHelper implements HttpHelper {
     private NewsService mNewsApiService;
     private StockService mStockApiService;
     private WeatherService mWeatherService;
-  /* @Inject
-    public RetrofitHelper(CommonService commonService, NewsService newsService, StockService stockService) {
-        this.mCommonApiService = commonService;
-        this.mNewsApiService = newsService;
-        this.mStockApiService = stockService;
-    }*/
+
+    /* @Inject
+      public RetrofitHelper(CommonService commonService, NewsService newsService, StockService stockService) {
+          this.mCommonApiService = commonService;
+          this.mNewsApiService = newsService;
+          this.mStockApiService = stockService;
+      }*/
     @Inject
     public RetrofitHelper(CommonService mCommonApiService, NewsService mNewsApiService, StockService mStockApiService, WeatherService mWeatherService) {
         this.mCommonApiService = mCommonApiService;
@@ -73,13 +74,13 @@ public class RetrofitHelper implements HttpHelper {
     }
 
     @Override
-    public Flowable<ApiResponse<List<ArticlesEntity>>> getArticles(int categoryId) {
-        return mNewsApiService.articles(categoryId, 1 );
+    public Flowable<ApiResponse<List<ArticlesEntity>>> getArticles(int categoryId, int page) {
+        return mNewsApiService.articles(categoryId, page);
     }
 
     @Override
     public Flowable<ApiResponse<List<ArticlesEntity>>> getMoreArticles(int categoryId, int pageOffset) {
-        return mNewsApiService.articles(categoryId, pageOffset );
+        return mNewsApiService.articles(categoryId, pageOffset);
     }
 
     @Override
@@ -134,7 +135,7 @@ public class RetrofitHelper implements HttpHelper {
 
     @Override
     public Flowable<ApiResponse<List<ArticlesEntity>>> getColumns(String name, int page) {
-        return mNewsApiService.articlesByAuthor(name,page);
+        return mNewsApiService.articlesByAuthor(name, page);
     }
 
     @Override
@@ -381,32 +382,32 @@ public class RetrofitHelper implements HttpHelper {
     }
 
     @Override
-    public Flowable<ApiResponse<List<StockPriceEntity>>> getStocksByIndustry(String baseIndex, String sortBy,String order, String industryCode, int pageOffset) {
+    public Flowable<ApiResponse<List<StockPriceEntity>>> getStocksByIndustry(String baseIndex, String sortBy, String order, String industryCode, int pageOffset) {
         return mStockApiService.getStocksByIndustry(baseIndex, sortBy, order, industryCode, pageOffset);
     }
 
     @Override
-    public Flowable<ApiResponse<List<StockPriceEntity>>> getStocksByArea(String baseIndex, String sortBy,String order, String areaCode, int pageOffset) {
+    public Flowable<ApiResponse<List<StockPriceEntity>>> getStocksByArea(String baseIndex, String sortBy, String order, String areaCode, int pageOffset) {
         return mStockApiService.getStocksByArea(baseIndex, sortBy, order, areaCode, pageOffset);
     }
 
     @Override
-    public Flowable<ApiResponse<List<StockPriceEntity>>> getStocksByInvestor(String baseIndex, String sortBy,String order, String investorCode, int pageOffset) {
+    public Flowable<ApiResponse<List<StockPriceEntity>>> getStocksByInvestor(String baseIndex, String sortBy, String order, String investorCode, int pageOffset) {
         return mStockApiService.getStocksByInvestor(baseIndex, sortBy, order, investorCode, pageOffset);
     }
 
     @Override
-    public Flowable<ApiResponse<List<StockPriceEntity>>> getStocksByDealer(String baseIndex, String sortBy,String order, String dealerCode, int pageOffset) {
+    public Flowable<ApiResponse<List<StockPriceEntity>>> getStocksByDealer(String baseIndex, String sortBy, String order, String dealerCode, int pageOffset) {
         return mStockApiService.getStocksByDealer(baseIndex, sortBy, order, dealerCode, pageOffset);
     }
 
     @Override
-    public Flowable<ApiResponse<List<StockPriceEntity>>> getStocksByLawyer(String baseIndex, String sortBy,String order, String lawyerCode, int pageOffset) {
+    public Flowable<ApiResponse<List<StockPriceEntity>>> getStocksByLawyer(String baseIndex, String sortBy, String order, String lawyerCode, int pageOffset) {
         return mStockApiService.getStocksByLawyer(baseIndex, sortBy, order, lawyerCode, pageOffset);
     }
 
     @Override
-    public Flowable<ApiResponse<List<StockPriceEntity>>> getStocksByAccountant(String baseIndex, String sortBy,String order, String accountantCode, int pageOffset) {
+    public Flowable<ApiResponse<List<StockPriceEntity>>> getStocksByAccountant(String baseIndex, String sortBy, String order, String accountantCode, int pageOffset) {
         return mStockApiService.getStocksByAccountant(baseIndex, sortBy, order, accountantCode, pageOffset);
     }
 
@@ -427,7 +428,7 @@ public class RetrofitHelper implements HttpHelper {
 
     @Override
     public Flowable<TokenEntity> tryRegister(String userName, String password, String confirmPassword) {
-        return mCommonApiService.tryRegister(userName,password,confirmPassword);
+        return mCommonApiService.tryRegister(userName, password, confirmPassword);
     }
 
     @Override
@@ -437,12 +438,12 @@ public class RetrofitHelper implements HttpHelper {
 
     @Override
     public Flowable<captchaAuthEntity> captchaAuth(String response, String hashkey) {
-        return mCommonApiService.captchaAuth(response,hashkey);
+        return mCommonApiService.captchaAuth(response, hashkey);
     }
 
     @Override
-    public Flowable<HashKeyEntity> passwordChange(String token,String newPassword1, String newPassword2) {
-        return mCommonApiService.passwordChange(token,newPassword1,newPassword2);
+    public Flowable<HashKeyEntity> passwordChange(String token, String newPassword1, String newPassword2) {
+        return mCommonApiService.passwordChange(token, newPassword1, newPassword2);
     }
 
     @Override
@@ -456,18 +457,28 @@ public class RetrofitHelper implements HttpHelper {
     }
 
     @Override
-    public Flowable<HashKeyEntity> getAvatar(String token,MultipartBody.Part file) {
-        return mCommonApiService.tryAvatar(token,file);
+    public Flowable<HashKeyEntity> getAvatar(String token, MultipartBody.Part file) {
+        return mCommonApiService.tryAvatar(token, file);
     }
 
     @Override
     public Flowable<HashKeyEntity> avatarUpload(String token, RequestBody file) {
-        return mCommonApiService.avatarUpload(token,file);
+        return mCommonApiService.avatarUpload(token, file);
     }
 
     @Override
     public Flowable<WeatherEntity<H3>> weatherData(String appKey, String area) {
-        return mWeatherService.weatherData(appKey,area);
+        return mWeatherService.weatherData(appKey, area);
+    }
+
+    @Override
+    public Flowable<ApiResponse<List<ArticlesEntity>>> newsSearch(String searchKey, int offset) {
+        return mStockApiService.newsSearch(searchKey, offset);
+    }
+
+    @Override
+    public Flowable<ApiResponse<List<ArticlesEntity>>> newsSearch(String searchKey, int offset, int size) {
+        return mStockApiService.newsSearch(searchKey, offset, size);
     }
 
 

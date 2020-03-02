@@ -67,7 +67,7 @@ public class HttpModule {
     @Provides
     @StockURL
     Retrofit provideStockRetrofit(Retrofit.Builder builder, OkHttpClient client) {
-        return createRetrofit(builder, client, Constants.CHINAIPO_STOCK_API_URL);
+        return createRetrofit(builder, client, Constants.CHINAIPO_SEARCH_API_URL);
     }
 
     @Singleton

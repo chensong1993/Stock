@@ -116,6 +116,7 @@ public class Constants {
     public static final String CHINAIPO_3G_NEWS_URL = "http://m.chinaipo.com/news/";
     public static final String CHINAIPO_SHARESTOCK_URL="http://m.chinaipo.com/stock/";
     public static final String CHINAIPO_COMMON_API_URL = "http://api.chinaipo.com/";
+    public static final String CHINAIPO_SEARCH_API_URL="http://api.chinaipo.com/zh-hans/api/";
     public static final String CHINAIPO_NEWS_API_URL = "http://api.chinaipo.com/api/";
     public static final String CHINAIPO_STOCK_API_URL = "http://api.chinaipo.com/markets/v1/";
     public static final String CHINAIPO_WEATHER_API_URL = "http://api.shujuzhihui.cn/api/weather/";

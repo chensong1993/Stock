@@ -7,8 +7,8 @@ ext {
             buildToolsVersion             : "28.0.3",
             minSdkVersion                 : 16,
             targetSdkVersion              : 28,
-            versionCode                   : 41,
-            versionName                   : "2.4.1",
+            versionCode                   : 50,
+            versionName                   : "2.5.0",
             renderscriptTargetApi         : 22,
             renderscriptSupportModeEnabled: true
     ]
@@ -200,6 +200,7 @@ ext {
             "bugly-nativecrashreport"          : 'com.tencent.bugly:nativecrashreport:3.3.1',
 
             //其中latest.release指代最新Bugly NDK版本号，也可以指定明确的版本号，例如3.0
+
 
             //PushSDK必须依赖基础组件库，所以需要加入对应依赖
             "umeng-common"                     : 'com.umeng.sdk:common:1.5.3',

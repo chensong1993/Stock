@@ -1,5 +1,6 @@
 package com.zhiyi.chinaipo.ui.widget.ad;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -37,7 +38,7 @@ import okhttp3.Response;
  * @date 2018/12/5 10:51
  */
 public class AdsUiFresco {
-    UiFrescos frescos = AdActivity.frescos;
+   // UiFrescos frescos = AdActivity.frescos;
 
     public interface UiFrescos {
         void onShowAds();
@@ -53,6 +54,7 @@ public class AdsUiFresco {
                 return false;
             }
 
+            @SuppressLint("CheckResult")
             @Override
             public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
                 Observable.interval(0, 1, TimeUnit.SECONDS)
@@ -61,8 +63,8 @@ public class AdsUiFresco {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Consumer<Object>() {
                             @Override
-                            public void accept(Object o) throws Exception {
-                                frescos.onShowAds();
+                            public void accept(Object o) {
+                      //          frescos.onShowAds();
                             }
                         });
 

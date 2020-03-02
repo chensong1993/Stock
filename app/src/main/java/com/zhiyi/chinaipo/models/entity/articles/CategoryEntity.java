@@ -15,6 +15,11 @@
  */
 package com.zhiyi.chinaipo.models.entity.articles;
 
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+
+import java.util.Objects;
+
 /**
  * @param
  * @author chen
@@ -22,67 +27,64 @@ package com.zhiyi.chinaipo.models.entity.articles;
  * @return
  */
 public class CategoryEntity {
+    private String SHORT_URL;
+
     private int id;
+
     private String name;
-//    private String fullName;
-//    private String related;
 
-    public CategoryEntity() {
+    private String nav_type;
+
+    public void setSHORT_URL(String SHORT_URL){
+        this.SHORT_URL = SHORT_URL;
     }
-
-    public CategoryEntity(int id, String name) {
-        this.id = id;
-        this.name = name;
+    public String getSHORT_URL(){
+        return this.SHORT_URL;
     }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
+    public void setId(int id){
         this.id = id;
     }
+    public int getId(){
+        return this.id;
+    }
+    public void setName(String name){
+        this.name = name;
+    }
+    public String getName(){
+        return this.name;
+    }
+    public void setNav_type(String nav_type){
+        this.nav_type = nav_type;
+    }
+    public String getNav_type(){
+        return this.nav_type;
+    }
 
-//    public String getFullName() {
-//        return fullName;
-//    }
-//
-//    public void setFullName(String fullName) {
-//        this.fullName = fullName;
-//    }
-//
-//    public String getRelated() {
-//        return related;
-//    }
-//
-//    public void setRelated(String related) {
-//        this.related = related;
-//    }
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CategoryEntity that = (CategoryEntity) o;
+        return id == that.id &&
+                Objects.equals(SHORT_URL, that.SHORT_URL) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(nav_type, that.nav_type);
+    }
 
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(SHORT_URL, id, name, nav_type);
+    }
 
     @Override
     public String toString() {
         return "CategoryEntity{" +
-                "id=" + id +
+                "SHORT_URL='" + SHORT_URL + '\'' +
+                ", id=" + id +
                 ", name='" + name + '\'' +
+                ", nav_type='" + nav_type + '\'' +
                 '}';
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof CategoryEntity) {
-            CategoryEntity u = (CategoryEntity) obj;
-            return u.getId() == this.getId() && u.getName().equals(this.getName());
-        }
-        return super.equals(obj);
-    }
-
 }

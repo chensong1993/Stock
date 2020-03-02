@@ -35,8 +35,8 @@ public class SearchActivity extends SimpleActivity {
 //    ImageView mImgCache;
     @BindView(R.id.tv_zixun)
     TextView mTvZixun;
-    @BindView(R.id.tv_hangqing)
-    TextView mTvHangqing;
+//    @BindView(R.id.tv_hangqing)
+//    TextView mTvHangqing;
     @BindView(R.id.tv_author)
     TextView mTvAuthor;
     private Intent intent;
@@ -79,17 +79,17 @@ public class SearchActivity extends SimpleActivity {
         }
     }
 
-    @OnClick(R.id.tv_hangqing)
-    void searchStocks() {
-        if (!RepeatCllickUtil.isFastDoubleClick()) {
-            intent = new Intent(this, SearchDetailsActivity.class);
-            intent.putExtra(Constants.SEARCHING_KEY_USING, "");
-            intent.putExtra(Constants.SEARCHING_TYPE_KEY, Constants.SEARCHING_TYPE_STOCK);
-            intent.putExtra(Constants.SEARCHING_TYPE, R.string.x_hangqing);
-            // LogUtil.i("Got input as " , mEtSeek.getText().toString() + Constants.SEARCHING_TYPE_STOCK);
-            startActivity(intent);
-        }
-    }
+//    @OnClick(R.id.tv_hangqing)
+//    void searchStocks() {
+//        if (!RepeatCllickUtil.isFastDoubleClick()) {
+//            intent = new Intent(this, SearchDetailsActivity.class);
+//            intent.putExtra(Constants.SEARCHING_KEY_USING, "");
+//            intent.putExtra(Constants.SEARCHING_TYPE_KEY, Constants.SEARCHING_TYPE_STOCK);
+//            intent.putExtra(Constants.SEARCHING_TYPE, R.string.x_hangqing);
+//            // LogUtil.i("Got input as " , mEtSeek.getText().toString() + Constants.SEARCHING_TYPE_STOCK);
+//            startActivity(intent);
+//        }
+//    }
 
     @OnClick(R.id.tv_author)
     void searchAuthor() {

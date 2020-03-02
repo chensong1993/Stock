@@ -110,7 +110,7 @@ public class WebDetailAdapter extends RecyclerView.Adapter<WebDetailAdapter.WebV
                 final String key = items.getTags().get(i).getName().toString();
                 final TextView tv_key = new TextView(context);
                 tv_key.setText(key);
-                tv_key.setTextSize(18);
+                tv_key.setTextSize(13);
                 tv_key.setPadding(10, 5, 10, 5);
                 tv_key.setTextColor(context.getResources().getColor(R.color.blue));
                 tv_key.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.wabdialog));
@@ -137,19 +137,19 @@ public class WebDetailAdapter extends RecyclerView.Adapter<WebDetailAdapter.WebV
             String unnecessary = "http://www.chinaipo.comhttp://www.chinaipo.com/";
             String unnecessary1 = "/data/upload/";
             String content;
-            if (items.getContent().getContent().contains(unnecessary1)) {
-                content = items.getContent().getContent().replace(unnecessary1, "http://www.chinaipo.com/data/upload/");
-                if (content.contains(unnecessary)) {
-                    String content1 = content.replace(unnecessary, "http://www.chinaipo.com/");
-                    analyzeUnit.setWBcontents(webView, content1);
-                } else {
-                    analyzeUnit.setWBcontents(webView, content);
-                }
-                Log.d("webviewc1", content);
-            } else {
-                analyzeUnit.setWBcontents(webView, items.getContent().getContent());
-            }
-
+//            if (items.getContent().getContent().contains(unnecessary1)) {
+//                content = items.getContent().getContent().replace(unnecessary1, "http://www.chinaipo.com/data/upload/");
+//                if (content.contains(unnecessary)) {
+//                    String content1 = content.replace(unnecessary, "http://www.chinaipo.com/");
+//                    analyzeUnit.setWBcontents(webView, content1);
+//                } else {
+//                    analyzeUnit.setWBcontents(webView, content);
+//                }
+//                Log.d("webviewc1", content);
+//            } else {
+//                analyzeUnit.setWBcontents(webView, items.getContent().getContent());
+//            }
+            analyzeUnit.setWBcontents(webView, items.getContent().getContent());
             Log.d("webviewc", items.getContent().getContent());
             //精选新闻
             mRelatedAdapter = new RelatedNewsAdapter(context, items.getOtherLinks());

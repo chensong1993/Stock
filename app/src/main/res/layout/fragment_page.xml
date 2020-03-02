@@ -33,6 +33,10 @@
                  android:text="当前网络不可用"
                  android:textColor="@color/white"
                  android:visibility="" />-->
+            <!--<EditText-->
+                <!--android:id="@+id/et_token"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content" />-->
             <!--轮播图-->
             <com.youth.banner.Banner
                 android:id="@+id/banner"

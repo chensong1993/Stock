@@ -63,7 +63,7 @@ public class SpecialFragment extends SimpleFragment {
     protected void initEventAndData() {
       //  mRlProgress.setVisibility(View.VISIBLE);
         mTvTitle.setText("专题");
-        StatusBarUtil.enableTranslucentStatusbar(getActivity(), mStatusBarView,0);
+       // StatusBarUtil.enableTranslucentStatusbar(getActivity(), mStatusBarView,0);
         visitUrl();
 
     }

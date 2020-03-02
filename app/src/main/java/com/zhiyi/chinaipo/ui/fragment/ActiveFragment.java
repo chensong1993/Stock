@@ -64,7 +64,7 @@ public class ActiveFragment extends SimpleFragment {
     protected void initEventAndData() {
       //  mRlProgress.setVisibility(View.VISIBLE);
         mTvTitle.setText("活动");
-        StatusBarUtil.enableTranslucentStatusbar(getActivity(), mStatusBarView,0);
+     //   StatusBarUtil.enableTranslucentStatusbar(getActivity(), mStatusBarView,0);
         visitUrl();
 
     }

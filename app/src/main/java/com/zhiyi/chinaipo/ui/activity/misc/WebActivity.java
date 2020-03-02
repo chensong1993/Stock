@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.WebChromeClient;
@@ -25,6 +27,7 @@ import com.zhiyi.chinaipo.base.SimpleActivity;
 import com.zhiyi.chinaipo.ui.activity.MainActivity;
 import com.zhiyi.chinaipo.ui.widget.WebLayout;
 import com.zhiyi.chinaipo.util.ActivityCollector;
+import com.zhiyi.chinaipo.util.DestroyActivityUtil;
 import com.zhiyi.chinaipo.util.LogUtil;
 
 import java.util.Set;
@@ -34,18 +37,21 @@ import me.yokeyword.fragmentation.SwipeBackLayout;
 
 public class WebActivity extends SimpleActivity {
 
-    protected AgentWeb mAgentWeb;
+    AgentWeb mAgentWeb;
     @BindView(R.id.container)
     LinearLayout mLinearLayout;
     private String mWebTitle;
     private String mWebURL, PushURL = null;
-    private String URL;
+    //private String URL;
     @BindView(R.id.img_back)
     ImageView mImgbcak;
     @BindView(R.id.tv_title)
     TextView mTvActivityTitle;
-    @BindView(R.id.rl_progress)
-    RelativeLayout mRlProgress;
+    //    @BindView(R.id.rl_progress)
+//    RelativeLayout mRlProgress;
+    private int type;
+
+
 
     @Override
     protected int getLayout() {
@@ -58,60 +64,54 @@ public class WebActivity extends SimpleActivity {
     }
 
     private void initData() {
-        siwpeBack();
+        setSwipeBackEnable(false);
+        // siwpeBack();
         //获取推送的参数
-        if (getIntent().getExtras() != null) {
-            Bundle bun = getIntent().getExtras();
-
-            Set<String> keySet = bun.keySet();
-            LogUtil.i("pushSize", keySet.size() + "");
-            for (String key : keySet) {
-                String value = bun.getString(key);
-                if (value != null) {
-                    PushURL = value;
-                }
-            }
-
-        }
+//        if (getIntent().getExtras() != null) {
+//            Bundle bun = getIntent().getExtras();
+//
+//            Set<String> keySet = bun.keySet();
+//            LogUtil.i("pushSize", keySet.size() + "");
+//            for (String key : keySet) {
+//                String value = bun.getString(key);
+//                if (value != null) {
+//                    PushURL = value;
+//                }
+//            }
+//
+//        }
         mWebURL = getIntent().getStringExtra(Constants.GOTO_WEB_URL);
-        mRlProgress.setVisibility(View.VISIBLE);
+        // mRlProgress.setVisibility(View.VISIBLE);
         mWebTitle = getIntent().getStringExtra(Constants.GOTO_WEB_TITLE);
+        type = getIntent().getIntExtra("TYPE", -1);
         //  LogUtil.i("GOTO_WEB_URL", mWebURL);
         mTvActivityTitle.setText(mWebTitle);
         mImgbcak.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity activity = ActivityCollector.getActivity(MainActivity.class);
-                if (activity != null) {
-                    finish();
-                } else {
-                    startActivity(new Intent(WebActivity.this, MainActivity.class));
-                    finish();
-                }
+                finishActivity();
             }
         });
-        if (mWebURL != null) {
-            URL = mWebURL;
-        } else {
-            URL = PushURL;
-        }
-        mAgentWeb = AgentWeb.with(this)//
-                .setAgentWebParent(mLinearLayout, new LinearLayout.LayoutParams(-1, -1))//
+//        if (mWebURL != null) {
+//            URL = mWebURL;
+//        } else {
+//            URL = PushURL;
+//        }
+        Log.i("mWebURLmWebURL", mWebURL);
+
+        mAgentWeb = AgentWeb.with(this)
+                .setAgentWebParent(mLinearLayout, new LinearLayout.LayoutParams(-1, -1))
                 .useDefaultIndicator(ContextCompat.getColor(this, R.color.blue), 2)
-                //               .setIndicatorColorWithHeight(-1, 3)
                 .setWebChromeClient(mWebChromeClient)
                 .setWebViewClient(mWebViewClient)
-                .setSecurityType(AgentWeb.SecurityType.STRICT_CHECK)
                 .setMainFrameErrorView(R.layout.agentweb_error_page, -1)
-                .setWebLayout(new WebLayout(this))
                 .setOpenOtherPageWays(DefaultWebClient.OpenOtherPageWays.ASK)//打开其他应用时，弹窗咨询用户是否前往其他应用
-                .createAgentWeb()//
+                .interceptUnkownUrl()
+                .createAgentWeb()
                 .ready()
-                .go(URL);
+                .go(mWebURL);
 
-        //mAgentWeb.getLoader().loadUrl(getUrl());
-
-
+            
     }
 
     /* @Override
@@ -161,44 +161,12 @@ public class WebActivity extends SimpleActivity {
 
      }
  */
-    public void siwpeBack() {
-        getSwipeBackLayout().addSwipeListener(new SwipeBackLayout.OnSwipeListener() {
-            @Override
-            public void onDragStateChange(int state) {
-                // Drag state
-                if (state == 3) {
-                    MainActivity activity = ActivityCollector.getActivity(MainActivity.class);
-                    if (activity != null) {
-                        finish();
-                    } else {
-                        startActivity(new Intent(WebActivity.this, MainActivity.class));
-                        finish();
-                    }
-                }
-            }
-
-            @Override
-            public void onEdgeTouch(int edgeFlag) {
-                // 触摸的边缘flag
-            }
-
-            @Override
-            public void onDragScrolled(float scrollPercent) {
-                // 滑动百分比
-
-            }
-        });
-    }
 
     private WebViewClient mWebViewClient = new WebViewClient() {
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-            return super.shouldOverrideUrlLoading(view, request);
-        }
 
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            mRlProgress.setVisibility(View.GONE);
+            // mRlProgress.setVisibility(View.GONE);
             LogUtil.i("Info", "BaseWebActivity onPageStarted");
         }
     };
@@ -213,32 +181,25 @@ public class WebActivity extends SimpleActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
-        if (mAgentWeb.handleKeyEvent(keyCode, event)) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
+            finishActivity();
             return true;
         }
         return super.onKeyDown(keyCode, event);
     }
 
-    @Override
-    protected void onPause() {
-        mAgentWeb.getWebLifeCycle().onPause();
-        super.onPause();
 
+    private void finishActivity() {
+        if (type == 1) {
+            DestroyActivityUtil.destoryActivity("MainActivity");
+
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+        } else {
+            finish();
+        }
     }
 
-    @Override
-    protected void onResume() {
-        mAgentWeb.getWebLifeCycle().onResume();
-        super.onResume();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        LogUtil.i("Info", "result:" + requestCode + " result:" + resultCode);
-        //   mAgentWeb.uploadFileResult(requestCode, resultCode, data);
-        super.onActivityResult(requestCode, resultCode, data);
-    }
 
     @Override
     protected void onDestroy() {
@@ -247,23 +208,26 @@ public class WebActivity extends SimpleActivity {
         mAgentWeb.getWebLifeCycle().onDestroy();
     }
 
-    @Override
-    public void onBackPressedSupport() {
-        super.onBackPressedSupport();
-        MainActivity activity = ActivityCollector.getActivity(MainActivity.class);
-        if (activity != null) {
-            finish();
-        } else {
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
-        }
-    }
+//    @Override
+//    public void onBackPressedSupport() {
+//        super.onBackPressedSupport();
+//        MainActivity activity = ActivityCollector.getActivity(MainActivity.class);
+//        if (activity != null) {
+//            finish();
+//        } else {
+//            startActivity(new Intent(this, MainActivity.class));
+//            finish();
+//        }
+//    }
+//
+
 
     public static class Builder {
 
         private String mTitle;
         private String mWebUrl;
         private Context mContext;
+        private int type;
         private Activity mActivity;
 
         public Builder() {
@@ -277,6 +241,11 @@ public class WebActivity extends SimpleActivity {
 
         public Builder setActivity(Activity mActivity) {
             this.mActivity = mActivity;
+            return this;
+        }
+
+        public Builder setType(int type) {
+            this.type = type;
             return this;
         }
 
@@ -296,6 +265,7 @@ public class WebActivity extends SimpleActivity {
         intent.setClass(builder.mContext, WebActivity.class);
         intent.putExtra(Constants.GOTO_WEB_TITLE, builder.mTitle);
         intent.putExtra(Constants.GOTO_WEB_URL, builder.mWebUrl);
+        intent.putExtra("TYPE", builder.type);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         builder.mContext.startActivity(intent);
     }

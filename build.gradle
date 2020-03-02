@@ -8,6 +8,7 @@ buildscript {
         google()
         mavenCentral()
         maven {url "https://clojars.org/repo/"}
+        maven { url 'https://dl.bintray.com/umsdk/release' }
     }
 
     dependencies {
@@ -36,6 +37,8 @@ allprojects {
     repositories {
         jcenter()
         google()
+        mavenCentral()
+        maven { url 'https://dl.bintray.com/umsdk/release' }
         maven { url "https://jitpack.io" }
         maven { url "https://dl.bintray.com/thelasterstar/maven/" }
     }

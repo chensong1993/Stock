@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
+import com.umeng.analytics.MobclickAgent;
 import com.zhiyi.chinaipo.app.App;
 import com.zhiyi.chinaipo.broadcastreceiver.NetBroadcastReceiver;
 import com.zhiyi.chinaipo.util.LogUtil;
@@ -23,6 +24,7 @@ public abstract class SimpleActivity extends SwipeBackActivity implements NetBro
     //网络类型
     private int netMobile;
     public static NetBroadcastReceiver.NetEvevt evevt;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,7 +36,7 @@ public abstract class SimpleActivity extends SwipeBackActivity implements NetBro
         App.getInstance().addActivity(this);
         initEventAndData();
         //状态栏字体变黑
-        StatusBarUtil.StatusBarLightMode(this,true);
+        //  StatusBarUtil.StatusBarLightMode(this,true);
         evevt = this;
         inspectNet();
       /*  IntentFilter filter = new IntentFilter();
@@ -96,6 +98,17 @@ public abstract class SimpleActivity extends SwipeBackActivity implements NetBro
 
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
 
     /**
      * 判断有无网络 。

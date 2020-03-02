@@ -11,18 +11,21 @@ import java.util.List;
 public interface SearchConnector {
 
     interface View extends BaseView {
-        void showStocks(List<StockPriceEntity> stockIndexes);
-        void showArticles(List<ArticlesEntity> newsList);
-        void updateSearchContext(int searchType, String searchString);
-        void userToken(String userToken);
+        void searchNewList(List<ArticlesEntity> list);
+//        void showStocks(List<StockPriceEntity> stockIndexes);
+//        void showArticles(List<ArticlesEntity> newsList);
+//        void updateSearchContext(int searchType, String searchString);
+//        void userToken(String userToken);
         void err(String err);
     }
 
     interface Presenter extends BasePresenter<View> {
 
-        void searchStockByKey(String stockCodeOrName, int pageOffset);
+        //  void searchStockByKey(String stockCodeOrName, int pageOffset);
         void searchByTitle(String searchKey, int pageOffset);
-        void searchByAuthor(String searchKey, int pageOffset);
+
+        void searchByTitle(String searchKey, int pageOffset, int size);
+        //  void searchByAuthor(String searchKey, int pageOffset);
 
     }
 }

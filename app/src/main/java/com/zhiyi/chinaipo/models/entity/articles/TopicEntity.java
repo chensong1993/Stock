@@ -21,6 +21,16 @@ public class TopicEntity {
     private String related_name;
     private String related_author;
 
+    private String href_url;
+
+    public String getHref_url() {
+        return href_url;
+    }
+
+    public void setHref_url(String href_url) {
+        this.href_url = href_url;
+    }
+
     public int getId() {
         return id;
     }

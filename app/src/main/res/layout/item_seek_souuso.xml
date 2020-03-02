@@ -39,27 +39,27 @@
                 android:textColor="@color/blue"
                 android:textSize="12dp" />
 
-            <TextView
-                android:layout_width="1dp"
-                android:layout_height="12dp"
-                android:layout_gravity="center_vertical"
-                android:background="@color/hui" />
+            <!--<TextView-->
+                <!--android:layout_width="1dp"-->
+                <!--android:layout_height="12dp"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:background="@color/hui" />-->
 
-            <TextView
-                android:id="@+id/tv_hangqing"
-                android:layout_width="match_parent"
-                android:layout_height="25dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/x_hangqing"
-                android:textColor="@color/blue"
-                android:textSize="12dp" />
+            <!--<TextView-->
+                <!--android:id="@+id/tv_hangqing"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="25dp"-->
+                <!--android:layout_weight="1"-->
+                <!--android:gravity="center"-->
+                <!--android:text="@string/x_hangqing"-->
+                <!--android:textColor="@color/blue"-->
+                <!--android:textSize="12dp" />-->
 
-            <TextView
-                android:layout_width="1dp"
-                android:layout_height="12dp"
-                android:layout_gravity="center_vertical"
-                android:background="@color/hui" />
+            <!--<TextView-->
+                <!--android:layout_width="1dp"-->
+                <!--android:layout_height="12dp"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:background="@color/hui" />-->
 
             <TextView
                 android:id="@+id/tv_author"

@@ -8,6 +8,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.zhiyi.chinaipo.ui.activity.NewsDetailActivity;
+import com.zhiyi.chinaipo.ui.activity.misc.WebActivity;
 import com.zhiyi.chinaipo.ui.activity.stocks.StockDetailActivity;
 import com.zhiyi.chinaipo.util.tool.StringUtils;
 import com.zhiyi.chinaipo.util.webview_photo.JavascriptInterface;
@@ -70,7 +71,8 @@ public class WebviewUtil {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             int gotNewsID = RegUtil.getNewsId(url);
-            String gotStockID = RegUtil.getStockId(url);
+          //  String gotChannelName = RegUtil.getChannelName(url);
+          //  String gotStockID = RegUtil.getStockId(url);
             LogUtil.i("gotStockID", gotNewsID + "");
             if (url == null) {
                 return false;
@@ -84,21 +86,29 @@ public class WebviewUtil {
                 return true;
 
             }
-            if (gotStockID != null ) {
-                StockDetailActivity.launch(new StockDetailActivity.Builder()
-                        .setStockCode(gotStockID)
-                        .setStockName("股票编号")
-                        .setContext(context)
-                );
-                LogUtil.i("11111", "3");
 
-              /*  WebActivity.launch(new WebActivity.Builder()
-                        .setContext(context)
-                        .setUrl(url)
-                );
-                LogUtil.i("11111", "2" + url);
-                return true;*/
-            }
+//            if(gotChannelName.equals("html")){
+//                WebActivity.launch(new WebActivity.Builder()
+//                        .setContext(context)
+//                        .setTitle("资本邦")
+//                        .setUrl(url)
+//                );
+//            }
+//            if (gotStockID != null ) {
+//                StockDetailActivity.launch(new StockDetailActivity.Builder()
+//                        .setStockCode(gotStockID)
+//                        .setStockName("股票编号")
+//                        .setContext(context)
+//                );
+//                LogUtil.i("11111", "3");
+//
+//              /*  WebActivity.launch(new WebActivity.Builder()
+//                        .setContext(context)
+//                        .setUrl(url)
+//                );
+//                LogUtil.i("11111", "2" + url);
+//                return true;*/
+//            }
             return true;
             // Otherwise allow the OS to handle things like tel, mailto, etc.
            /* Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));

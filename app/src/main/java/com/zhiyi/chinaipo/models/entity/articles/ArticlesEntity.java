@@ -1,32 +1,29 @@
 package com.zhiyi.chinaipo.models.entity.articles;
 
+import java.util.Arrays;
 import java.util.List;
 
-public class ArticlesEntity  {
+public class ArticlesEntity {
 
-    private int categoryId;
-    private int[] categories;
+   // private int categoryId;
+
     private int id;
-    private String title;
-    private String description;
-    private String author;
-    private String source;
+
     private String newsType;
-    private int clickCounter;
+
     private int originalId;
-    private int commentCounter;
-    private String newstime;
+
+    private String source;
+
+    private String title;
+
     private String titlepic;
-    private List<String> morepic;
+
     private boolean isRead;
 
-    public boolean isRead() {
-        return isRead;
-    }
+    private String href_url;
 
-    public void setRead(boolean read) {
-        isRead = read;
-    }
+    private int categoryId;
 
     public int getCategoryId() {
         return categoryId;
@@ -36,13 +33,31 @@ public class ArticlesEntity  {
         this.categoryId = categoryId;
     }
 
-    public int[] getCategories() {
-        return categories;
+    public String getHref_url() {
+        return href_url;
     }
 
-    public void setCategories(int[] categories) {
-        this.categories = categories;
+    public void setHref_url(String href_url) {
+        this.href_url = href_url;
     }
+
+    public boolean isRead() {
+        return isRead;
+    }
+
+    public void setRead(boolean read) {
+        isRead = read;
+    }
+
+//    public int getCategoryId() {
+//        return categoryId;
+//    }
+//
+//    public void setCategoryId(int categoryId) {
+//        this.categoryId = categoryId;
+//    }
+
+
 
     public int getId() {
         return id;
@@ -60,21 +75,6 @@ public class ArticlesEntity  {
         this.title = title;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
 
     public String getSource() {
         return source;
@@ -92,13 +92,6 @@ public class ArticlesEntity  {
         this.newsType = newsType;
     }
 
-    public int getClickCounter() {
-        return clickCounter;
-    }
-
-    public void setClickCounter(int clickCounter) {
-        this.clickCounter = clickCounter;
-    }
 
     public int getOriginalId() {
         return originalId;
@@ -108,21 +101,7 @@ public class ArticlesEntity  {
         this.originalId = originalId;
     }
 
-    public int getCommentCounter() {
-        return commentCounter;
-    }
 
-    public void setCommentCounter(int commentCounter) {
-        this.commentCounter = commentCounter;
-    }
-
-    public String getNewstime() {
-        return newstime;
-    }
-
-    public void setNewstime(String newstime) {
-        this.newstime = newstime;
-    }
 
     public String getTitlepic() {
         return titlepic;
@@ -132,11 +111,7 @@ public class ArticlesEntity  {
         this.titlepic = titlepic;
     }
 
-    public List<String> getMorepic() {
-        return morepic;
-    }
 
-    public void setMorepic(List<String> morepic) {
-        this.morepic = morepic;
-    }
+
+
 }

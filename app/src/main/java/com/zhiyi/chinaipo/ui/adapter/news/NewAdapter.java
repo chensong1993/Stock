@@ -3,6 +3,7 @@ package com.zhiyi.chinaipo.ui.adapter.news;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import com.zhiyi.chinaipo.components.ImageLoader;
 import com.zhiyi.chinaipo.models.entity.articles.ArticlesEntity;
 import com.zhiyi.chinaipo.models.entity.news.NewsSave;
 import com.zhiyi.chinaipo.ui.activity.NewsDetailActivity;
+import com.zhiyi.chinaipo.ui.activity.misc.WebActivity;
 import com.zhiyi.chinaipo.util.RepeatCllickUtil;
 
 import java.util.Collection;
@@ -141,16 +143,33 @@ public class NewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             item.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
                     if (!RepeatCllickUtil.isFastDoubleClick()) {
-                        NewsDetailActivity.launch(new NewsDetailActivity.Builder()
-                                .setContext(mContext)
-                                .setId(items.getId())
-                                .setOriginalId(items.getOriginalId()));
-                        if (!items.isRead()) {
-                            items.setRead(true);
-                            mTitle.setTextColor(ContextCompat.getColor(mContext, R.color.hui1));
-                            App.getInstance().getNewsSaveDao().insert(new NewsSave(null, items.getOriginalId() + ""));
+                        Log.i("getHref_url", items.getHref_url());
+
+                        if (items.getCategoryId() == 39) {
+                            WebActivity.launch(new WebActivity.Builder()
+                                    .setContext(mContext)
+                                    .setTitle(items.getTitle())
+                                    .setUrl("http://m.chinaipo.com/zhuanti/" + items.getId() + ".html?utm_source=app")
+                            );
+                        }else {
+                            if (items.getHref_url() != null && !items.getHref_url().isEmpty()) {
+                                WebActivity.launch(new WebActivity.Builder()
+                                        .setContext(mContext)
+                                        .setTitle(items.getTitle())
+                                        .setUrl(items.getHref_url())
+                                );
+                            } else {
+                                NewsDetailActivity.launch(new NewsDetailActivity.Builder()
+                                        .setContext(mContext)
+                                        .setId(items.getId())
+                                        .setOriginalId(items.getOriginalId()));
+                                if (!items.isRead()) {
+                                    items.setRead(true);
+                                    mTitle.setTextColor(ContextCompat.getColor(mContext, R.color.hui1));
+                                    App.getInstance().getNewsSaveDao().insert(new NewsSave(null, items.getOriginalId() + ""));
+                                }
+                            }
                         }
 
                     }
@@ -204,14 +223,32 @@ public class NewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 @Override
                 public void onClick(View view) {
                     if (!RepeatCllickUtil.isFastDoubleClick()) {
-                        NewsDetailActivity.launch(new NewsDetailActivity.Builder()
-                                .setContext(mContext)
-                                .setId(items.getId())
-                                .setOriginalId(items.getOriginalId()));
-                        if (!items.isRead()) {
-                            items.setRead(true);
-                            mTitle.setTextColor(ContextCompat.getColor(mContext, R.color.hui1));
-                            App.getInstance().getNewsSaveDao().insert(new NewsSave(null, items.getOriginalId() + ""));
+                        Log.i("getHref_url", items.getHref_url());
+
+                        if (items.getCategoryId() == 39) {
+                            WebActivity.launch(new WebActivity.Builder()
+                                    .setContext(mContext)
+                                    .setTitle(items.getTitle())
+                                    .setUrl("http://m.chinaipo.com/zhuanti/" + items.getId() + ".html?utm_source=app")
+                            );
+                        }else {
+                            if (items.getHref_url() != null && !items.getHref_url().isEmpty()) {
+                                WebActivity.launch(new WebActivity.Builder()
+                                        .setContext(mContext)
+                                        .setTitle(items.getTitle())
+                                        .setUrl(items.getHref_url())
+                                );
+                            } else {
+                                NewsDetailActivity.launch(new NewsDetailActivity.Builder()
+                                        .setContext(mContext)
+                                        .setId(items.getId())
+                                        .setOriginalId(items.getOriginalId()));
+                                if (!items.isRead()) {
+                                    items.setRead(true);
+                                    mTitle.setTextColor(ContextCompat.getColor(mContext, R.color.hui1));
+                                    App.getInstance().getNewsSaveDao().insert(new NewsSave(null, items.getOriginalId() + ""));
+                                }
+                            }
                         }
 
                     }
@@ -240,7 +277,7 @@ public class NewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             mTitle.setText(items.getTitle());
             mCorp.setText(items.getSource());
             //Glide.with(mContext).load(items.getTitlepic()).into(mimageView);
-             ImageLoader.load(mContext, items.getTitlepic(), mimageView);
+            ImageLoader.load(mContext, items.getTitlepic(), mimageView);
             //  Picasso.with(mContext).load(items.getTitlepic()).into(mimageView);
         }
 

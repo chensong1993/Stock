@@ -58,7 +58,7 @@ public class MyNotificationService extends Service {
                 .setContentText(msg.text)
                 .setTicker(msg.ticker)
                 .setWhen(System.currentTimeMillis())
-                .setSmallIcon(R.drawable.umeng_push_notification_default_small_icon)
+                .setSmallIcon(R.drawable.ic_app_icon)
                 .setAutoCancel(true);
         Notification notification = mBuilder.getNotification();
         PendingIntent clickPendingIntent = getClickPendingIntent(this, msg);
