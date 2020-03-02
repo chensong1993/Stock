@@ -69,6 +69,7 @@ public class SpecialsFragment extends RootFragment<TopicPresenter> implements To
 //                if (netType < 0) {
 //                    ToastUtil.showToast(mContext, "当前网络不可用");
 //                }
+                page=1;
                 mPresenter.getTopic(page);
             }
         });

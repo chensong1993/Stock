@@ -90,6 +90,7 @@ public class LatterNewsFragment extends BaseFragment<LatterArticlesPresenter> im
         mSmartRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshlayout) {
+                pageOffset=1;
                 mPresenter.getArticles(categoryId);
 //                if (netType < 0) {
 //                    ToastUtil.showToast(mContext, "当前网络不可用");

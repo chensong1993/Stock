@@ -167,13 +167,13 @@ public class WebActivity extends SimpleActivity {
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             // mRlProgress.setVisibility(View.GONE);
-            LogUtil.i("Info", "BaseWebActivity onPageStarted");
+            LogUtil.i("Info", "BaseWebActivity onPageStarted"+url);
         }
     };
     private WebChromeClient mWebChromeClient = new WebChromeClient() {
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
-//            LogUtil.i("Info","progress:"+newProgress);
+            LogUtil.i("Info","progress:"+newProgress);
         }
     };
 

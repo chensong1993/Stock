@@ -68,7 +68,7 @@ public class PushActivity extends UmengNotifyClickActivity {
                                 .setContext(PushActivity.this)
                                 .setTitle("新闻")
                                 .setType(1)
-                                .setUrl(url+"?utm_source=app"));
+                                .setUrl(url));
 //                            Intent intent = new Intent(MipushTestActivity.this, WebActivity.class);
 //                            intent.putExtra(Constants.GOTO_WEB_URL, value);
 //                            startActivity(intent);

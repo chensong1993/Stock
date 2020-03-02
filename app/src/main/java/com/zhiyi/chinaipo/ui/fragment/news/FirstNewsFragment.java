@@ -239,6 +239,7 @@ public class FirstNewsFragment extends BaseFragment<ArticlesPresenter> implement
         mSmartRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshlayout) {
+                pageOffset=1;
                 mPresenter.getBanner();
                 // mPresenter.getIndexSC();
                 mPresenter.getArticles(0);
@@ -292,17 +293,25 @@ public class FirstNewsFragment extends BaseFragment<ArticlesPresenter> implement
                 if (currentUrl == null) {
                     return;
                 }
-                if (currentUrl.endsWith("html")) {
+                Log.i("OnBannerClick", "OnBannerClick: "+gotNewsID);
+                if (gotNewsID>20) {
+                    NewsDetailActivity.launch(new NewsDetailActivity.Builder()
+                            .setActivity(mActivity)
+                            .setContext(mContext)
+                            .setOriginalId(gotNewsID));
+
+                }else if(currentUrl.contains("m.chinaipo.com")){
                     WebActivity.launch(new WebActivity.Builder()
                             .setContext(mContext)
                             .setTitle(banners.get(position).getTitle())
                             .setUrl(banners.get(position).getDestUrl()+"?utm_source=app")
                     );
                 }else {
-                    NewsDetailActivity.launch(new NewsDetailActivity.Builder()
-                            .setActivity(mActivity)
+                    WebActivity.launch(new WebActivity.Builder()
                             .setContext(mContext)
-                            .setOriginalId(gotNewsID));
+                            .setTitle(banners.get(position).getTitle())
+                            .setUrl(banners.get(position).getDestUrl())
+                    );
                 }
 //                if (!RegUtil.isChinaIPOContent(currentUrl)) {
 //                    WebActivity.launch(new WebActivity.Builder()
